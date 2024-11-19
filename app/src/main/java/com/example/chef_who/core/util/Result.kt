@@ -1,4 +1,4 @@
-package com.example.chef_who.util
+package com.example.chef_who.core.util
 
 typealias DomainError = Error
 
