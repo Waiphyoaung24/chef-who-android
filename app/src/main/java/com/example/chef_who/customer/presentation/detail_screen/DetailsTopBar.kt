@@ -39,7 +39,7 @@ fun DetailsTopBar(
         navigationIcon = {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_back_arrow),
+                    painter = painterResource(id = R.drawable.back),
                     contentDescription = null,
                 )
             }

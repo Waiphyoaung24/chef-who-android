@@ -7,7 +7,9 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -55,6 +57,7 @@ fun SearchBar(
         TextField(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 17.dp)
                 .searchBar(),
             value = text,
             onValueChange = onValueChange,
@@ -74,10 +77,16 @@ fun SearchBar(
                     color = colorResource(id = R.color.placeholder)
                 )
             },
-            shape = MaterialTheme.shapes.medium,
+            shape = RoundedCornerShape(28.dp),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.White
+                unfocusedContainerColor = Color.White,
+                disabledContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -97,7 +106,7 @@ fun Modifier.searchBar(): Modifier = composed {
         border(
             width = 1.dp,
             color = Color.Black,
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.extraSmall
         )
     } else {
         this

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.chef_who.core.domain.models.Article
 import com.example.chef_who.core.presentation.common.MealList
+import com.example.chef_who.customer.domain.Food
 import com.example.chef_who.customer.presentation.home_screen.SearchBar
 import com.example.chef_who.ui.theme.Dimens.MediumPadding1
 
@@ -17,7 +18,7 @@ import com.example.chef_who.ui.theme.Dimens.MediumPadding1
 fun SearchScreen(
     state: SearchState,
     event: (SearchEvent) -> Unit,
-    navigateToDetails: (Article) -> Unit
+    navigateToDetails: (String) -> Unit
 ) {
 
     Column(
@@ -38,7 +39,7 @@ fun SearchScreen(
             val articles = it.collectAsLazyPagingItems()
             MealList(
                 articles = articles,
-                onClick = navigateToDetails
+                onClick = {}
             )
         }
     }

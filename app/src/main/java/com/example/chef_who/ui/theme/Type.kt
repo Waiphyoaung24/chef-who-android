@@ -57,5 +57,6 @@ val Typography = Typography(
         fontFamily = SpaceMono,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp
-    )
+    ),
+
 )

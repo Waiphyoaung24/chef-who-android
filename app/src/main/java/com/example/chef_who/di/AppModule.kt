@@ -14,6 +14,7 @@ import com.example.chef_who.core.domain.usecases.app_entry.AppEntryUseCases
 import com.example.chef_who.core.domain.usecases.app_entry.ReadAppEntry
 import com.example.chef_who.core.domain.usecases.app_entry.SaveAppEntry
 import com.example.chef_who.core.domain.usecases.meals.DeleteMeals
+import com.example.chef_who.core.domain.usecases.meals.GetHomeType
 import com.example.chef_who.core.domain.usecases.meals.GetMeals
 import com.example.chef_who.core.domain.usecases.meals.InsertMeals
 import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
@@ -75,7 +76,8 @@ object AppModule {
             insertMeals = InsertMeals(mealsDao),
             deleteMeals = DeleteMeals(mealsDao),
             selectMeals = SelectMeals(mealsDao),
-            selectSingleMeal = SelectSingleMeal(mealsDao)
+            selectSingleMeal = SelectSingleMeal(mealsDao),
+            mHomeType = GetHomeType(mealsRepository)
         )
     }
 

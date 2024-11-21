@@ -1,5 +1,6 @@
 package com.example.chef_who.core.presentation.bottom_nav_bar
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,16 +19,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.chef_who.R
 import com.example.chef_who.core.domain.models.Article
 import com.example.chef_who.core.navigation.Route
+import com.example.chef_who.customer.domain.listOfFood
 import com.example.chef_who.customer.presentation.bookmark_screen.BookMarkViewModel
 import com.example.chef_who.customer.presentation.bookmark_screen.BookmarkScreen
 import com.example.chef_who.customer.presentation.detail_screen.DetailsScreen
 import com.example.chef_who.customer.presentation.detail_screen.DetailsViewModel
-import com.example.chef_who.customer.presentation.home_screen.HomeScreen
+import com.example.chef_who.customer.presentation.finalize_home.ShowDashboard
 import com.example.chef_who.customer.presentation.home_screen.HomeViewModel
+import com.example.chef_who.customer.presentation.home_screen.MenuListScreen
 import com.example.chef_who.customer.presentation.search_screen.SearchScreen
 import com.example.chef_who.customer.presentation.search_screen.SearchViewModel
 
@@ -57,9 +59,7 @@ fun MealsNavigator() {
 
     //Hide the bottom navigation when the user is in the details screen
     val isBottomBarVisible = remember(key1 = backStackState) {
-        backStackState?.destination?.route == Route.HomeScreen.route ||
-                backStackState?.destination?.route == Route.SearchScreen.route ||
-                backStackState?.destination?.route == Route.BookmarkScreen.route
+        backStackState?.destination?.route == Route.MenuListScreen.route
     }
 
 
@@ -97,22 +97,29 @@ fun MealsNavigator() {
         ) {
             composable(route = Route.HomeScreen.route) { backStackEntry ->
                 val viewModel: HomeViewModel = hiltViewModel()
-                val articles = viewModel.meals.collectAsLazyPagingItems()
-                HomeScreen(
-                    articles = articles,
-                    navigateToSearch = {
+                viewModel.getHomeType()
+                ShowDashboard(
+                    viewModel.mData.value, navigateToMenuList = { i ->
                         navigateToTab(
                             navController = navController,
-                            route = Route.SearchScreen.route
-                        )
-                    },
-                    navigateToDetails = { article ->
-                        navigateToDetails(
-                            navController = navController,
-                            article = article
+                            route = Route.MenuListScreen.route
                         )
                     }
                 )
+            }
+            composable(route = Route.MenuListScreen.route) { backStackEntry ->
+                val viewModel: HomeViewModel = hiltViewModel()
+
+                MenuListScreen(
+                    title = "Delicious\nfood for you",
+                    food = listOfFood,
+                    navigateToDetail = { i ->
+                        navigateToDetails(
+                            navController = navController,
+                            foodId = i
+                        )
+                        Log.d("test food is", i)
+                    })
             }
             composable(route = Route.SearchScreen.route) {
                 val viewModel: SearchViewModel = hiltViewModel()
@@ -121,20 +128,19 @@ fun MealsNavigator() {
                 SearchScreen(
                     state = state,
                     event = viewModel::onEvent,
-                    navigateToDetails = { article ->
+                    navigateToDetails = { food ->
                         navigateToDetails(
                             navController = navController,
-                            article = article
+                            foodId = food
                         )
                     }
                 )
             }
             composable(route = Route.DetailsScreen.route) {
                 val viewModel: DetailsViewModel = hiltViewModel()
-                navController.previousBackStackEntry?.savedStateHandle?.get<Article?>("article")
-                    ?.let { article ->
-                        DetailsScreen(
-                            article = article,
+                navController.previousBackStackEntry?.savedStateHandle?.get<String?>("food")
+                    ?.let {
+                        DetailsScreen(data = listOfFood[2],
                             event = viewModel::onEvent,
                             navigateUp = { navController.navigateUp() }
                         )
@@ -147,10 +153,10 @@ fun MealsNavigator() {
                 OnBackClickStateSaver(navController = navController)
                 BookmarkScreen(
                     state = state,
-                    navigateToDetails = { article ->
+                    navigateToDetails = { food ->
                         navigateToDetails(
                             navController = navController,
-                            article = article
+                            foodId = food
                         )
                     }
                 )
@@ -181,9 +187,16 @@ private fun navigateToTab(navController: NavController, route: String) {
     }
 }
 
-private fun navigateToDetails(navController: NavController, article: Article) {
-    navController.currentBackStackEntry?.savedStateHandle?.set("article", article)
+private fun navigateToDetails(navController: NavController, foodId: String) {
+    navController.currentBackStackEntry?.savedStateHandle?.set("food", foodId)
     navController.navigate(
         route = Route.DetailsScreen.route
+    )
+}
+
+private fun navigateToMenuList(navController: NavController, sellerId: String) {
+    navController.currentBackStackEntry?.savedStateHandle?.set("sellerId", sellerId)
+    navController.navigate(
+        route = Route.MenuListScreen.route
     )
 }

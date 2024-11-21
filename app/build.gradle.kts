@@ -69,6 +69,8 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.31.4-beta")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-moshi:2.9.0")
+
     implementation ("androidx.paging:paging-runtime:3.1.1")
     implementation ("androidx.paging:paging-compose:3.2.0-rc01")
     //Coil
@@ -77,6 +79,13 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.5.2")
     ksp("androidx.room:room-compiler:2.5.2")
     implementation ("androidx.room:room-ktx:2.5.2")
+
+    implementation ("androidx.compose.foundation:foundation:1.7.0-alpha07")
+    implementation ("androidx.navigation:navigation-compose:2.7.7")
+
+//pager
+    implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
+    implementation ("com.google.accompanist:accompanist-pager-indicators:0.26.0-alpha")
 
 
     implementation(libs.hilt.android)

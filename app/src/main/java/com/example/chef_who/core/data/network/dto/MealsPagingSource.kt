@@ -3,33 +3,32 @@ package com.example.chef_who.core.data.network.dto
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.chef_who.core.domain.models.Article
+import com.example.chef_who.core.domain.models.FoodMenu
 
 class MealsPagingSource(
     private val mealsApi: MealApi,
     private val sources: String,
-) : PagingSource<Int, Article>() {
+) : PagingSource<Int, FoodMenu>() {
 
     private var totalMealsCount = 0
-    override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, FoodMenu>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
-            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+            anchorPage?.prevKey?.plus(10) ?: anchorPage?.nextKey?.minus(10)
         }
     }
 
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, FoodMenu> {
         val page = params.key ?: 1
         return try {
-            val mealsResponse = mealsApi.getMeals(sources = sources, page = page)
-            totalMealsCount = mealsResponse.articles.size
-            val articles = mealsResponse.articles.distinctBy { it.title }
+            val mealsResponse = mealsApi.getFoodMenu(page = 20)
             LoadResult.Page(
-                data = articles,
-                nextKey = if (totalMealsCount == mealsResponse.totalResults) null else page + 1,
+                data = mealsResponse,
+                nextKey = page + 10,
                 prevKey = null
             )
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
             LoadResult.Error(
                 throwable = e
