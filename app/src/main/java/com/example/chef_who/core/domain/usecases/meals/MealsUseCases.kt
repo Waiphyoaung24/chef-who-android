@@ -7,5 +7,8 @@ data class MealsUseCases(
     val deleteMeals: DeleteMeals,
     val insertMeals: InsertMeals,
     val selectMeals: SelectMeals,
-    val selectSingleMeal: SelectSingleMeal
+    val selectSingleMeal: SelectSingleMeal,
+    val getCategoryIds: GetCategoryIds,
+    val getMenuList : GetMenuList,
+    val getCartIds : GetCartList
 )

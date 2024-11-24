@@ -25,11 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.chef_who.customer.domain.Food
+import com.example.chef_who.customer.presentation.update.components.LoadImage
 
 @Composable
 fun FoodEachRow(
     food: Food,
-    navigateToDetail: (String) -> Unit,
+    navigateToDetail: (Food) -> Unit,
     onClick: () -> Unit
 ) {
 
@@ -46,18 +47,12 @@ fun FoodEachRow(
                 horizontalAlignment = CenterHorizontally,
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
             ) {
-                Image(
-                    painter = painterResource(id = food.image),
-                    contentDescription = "",
-                    Modifier.size(264.dp)
-                )
-                Text22_600(
-                    text = food.name,
-                    color = Color.Black,
-                    modifier = Modifier.align(CenterHorizontally)
-                )
+
+                LoadImage(modifier = Modifier.size(244.dp),food.image)
+                Spacer(Modifier.height(5.dp))
+                Text(food.name, style = MaterialTheme.typography.headlineMedium)
                 Spacer(modifier = Modifier.height(5.dp))
-                Text17_700(text = "$${food.price}", color = MaterialTheme.colorScheme.primary)
+                Text("$${food.price}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }

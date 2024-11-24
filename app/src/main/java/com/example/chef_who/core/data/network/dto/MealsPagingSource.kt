@@ -2,11 +2,10 @@ package com.example.chef_who.core.data.network.dto
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.chef_who.core.domain.models.Article
 import com.example.chef_who.core.domain.models.FoodMenu
 
 class MealsPagingSource(
-    private val mealsApi: MealApi,
+    private val mealsApi: ChefWhoApi,
     private val sources: String,
 ) : PagingSource<Int, FoodMenu>() {
 

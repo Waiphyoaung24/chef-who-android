@@ -87,6 +87,8 @@ dependencies {
     implementation ("com.google.accompanist:accompanist-pager:0.26.0-alpha")
     implementation ("com.google.accompanist:accompanist-pager-indicators:0.26.0-alpha")
 
+    implementation ("com.jakewharton.timber:timber:5.0.1")
+    implementation ("androidx.compose.material:material-icons-extended:1.7.5")
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

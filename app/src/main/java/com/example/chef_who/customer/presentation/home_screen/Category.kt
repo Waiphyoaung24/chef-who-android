@@ -1,4 +1,4 @@
-package com.vipulasri.jetdelivery.ui.dashboard
+package com.example.chef_who.customer.presentation.home_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,18 +10,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.chef_who.core.domain.models.Category
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.presentation.update.components.LoadImage
 
 
 @Composable
-fun ShowCategoryElement(item: Dashboard.Item.SubItem) {
+fun ShowCategoryElement(item: Dashboard.Item.SubItem,mCatIds : String) {
     Column {
         Spacer(modifier = Modifier.height(5.dp)) // added to support space for header
         CategoryImage(item = item)
         Spacer(modifier = Modifier.height(5.dp))
         CategoryInfo(
-            title = item.title,
+            title = mCatIds,
             subTitle = item.subTitle
         )
     }

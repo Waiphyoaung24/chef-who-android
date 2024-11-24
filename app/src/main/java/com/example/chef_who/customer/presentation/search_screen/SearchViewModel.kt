@@ -31,11 +31,12 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun searchNews() {
-        val articles = mealsUseCases.searchMeals(
-            searchQuery = _state.value.searchQuery,
-            sources = listOf("bbc-news")
-        ).cachedIn(viewModelScope)
-        _state.value = _state.value.copy(articles = articles)
+//        val articles = mealsUseCases.searchMeals(
+//            searchQuery = _state.value.searchQuery,
+//            sources = listOf("bbc-news")
+//        ).cachedIn(viewModelScope)
+//        _state.value = _state.value.copy(articles = articles)
+//    }
     }
 
 

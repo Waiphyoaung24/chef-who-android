@@ -17,10 +17,17 @@ sealed class Route(
 
     object DetailsScreen : Route(route = "detailsScreen")
 
+    object ProfileScreen : Route(route = "profileScreen")
+
     object AppStartNavigation : Route(route = "appStartNavigation")
 
-    object ChefWhoNavigation : Route(route = "chefWhoNavigation")
 
     object ChefWhoNavigatorScreen : Route(route = "chefWhoNavigator")
+
+    object LoginScreen : Route(route = "loginScreen")
+
+    object RegisterScreen : Route(route = "registerScreen")
+
+
 }
 

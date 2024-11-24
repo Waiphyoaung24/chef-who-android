@@ -1,4 +1,4 @@
-package com.example.chef_who.customer.presentation.finalize_home
+package com.example.chef_who.customer.presentation.home_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.example.chef_who.customer.presentation.update.components.LoadImage
 import com.example.chef_who.R
 import com.example.chef_who.customer.domain.Dashboard
-import com.example.chef_who.customer.domain.Food
 
 
 @Composable

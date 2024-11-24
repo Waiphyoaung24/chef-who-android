@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.chef_who.core.domain.models.Article
-import com.example.chef_who.core.presentation.common.MealList
 import com.example.chef_who.customer.domain.Food
 import com.example.chef_who.customer.presentation.home_screen.SearchBar
 import com.example.chef_who.ui.theme.Dimens.MediumPadding1
@@ -18,7 +16,7 @@ import com.example.chef_who.ui.theme.Dimens.MediumPadding1
 fun SearchScreen(
     state: SearchState,
     event: (SearchEvent) -> Unit,
-    navigateToDetails: (String) -> Unit
+    navigateToDetails: (Food) -> Unit
 ) {
 
     Column(
@@ -35,12 +33,8 @@ fun SearchScreen(
             }
         )
         Spacer(modifier = Modifier.height(MediumPadding1))
-        state.articles?.let {
-            val articles = it.collectAsLazyPagingItems()
-            MealList(
-                articles = articles,
-                onClick = {}
-            )
-        }
+//        state.articles?.let {
+//            val articles = it.collectAsLazyPagingItems()
+//        }
     }
 }

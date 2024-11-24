@@ -1,4 +1,4 @@
-package com.example.chef_who.customer.presentation.finalize_home
+package com.example.chef_who.customer.presentation.home_screen
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding

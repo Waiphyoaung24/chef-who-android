@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.example.chef_who.core.domain.models.Article
 import com.example.chef_who.customer.domain.Food
 import com.example.chef_who.customer.presentation.home_screen.FoodEachRow
 import com.example.chef_who.ui.theme.Dimens.ExtraSmallPadding2
@@ -37,23 +36,10 @@ import com.google.accompanist.pager.*
 fun FoodList(
     modifier: Modifier = Modifier,
     foods: List<Food>,
-    navigateToDetail: (String) -> Unit,
+    navigateToDetail: (Food) -> Unit,
 ) {
     val pager = rememberPagerState(0)
 
-//    LazyRow(,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(start = 20.dp, top = 20.dp, bottom = 20.dp, end = 20.dp)
-//    ) {
-//        itemsIndexed(foods) { index, data ->
-//            FoodEachRow(data, navigateToDetail = navigateToDetail,
-//                onClick = {
-//                    navigateToDetail(data.name)
-//                })
-//        }
-//
-//    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,7 +54,7 @@ fun FoodList(
             FoodEachRow(
                 foods[index],
                 navigateToDetail = navigateToDetail,
-                onClick = { navigateToDetail(foods[index].name) })
+                onClick = { navigateToDetail(foods[index]) })
         }
         Spacer(Modifier.height(64.dp))
         HorizontalPagerIndicator(
@@ -82,59 +68,6 @@ fun FoodList(
 }
 
 
-@Composable
-fun MealList(
-    modifier: Modifier = Modifier,
-    articles: LazyPagingItems<Article>,
-    onClick: (Food) -> Unit
-) {
-
-    val handlePagingResult = handlePagingResult(articles)
-
-
-    if (handlePagingResult) {
-        LazyColumn(
-            modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(MediumPadding1),
-            contentPadding = PaddingValues(all = ExtraSmallPadding2)
-        ) {
-            items(
-                count = articles.itemCount,
-            ) {
-                articles[it]?.let { article ->
-                    MealCard(article = article, onClick = { })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun handlePagingResult(articles: LazyPagingItems<Article>): Boolean {
-    val loadState = articles.loadState
-    val error = when {
-        loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
-        loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
-        loadState.append is LoadState.Error -> loadState.append as LoadState.Error
-        else -> null
-    }
-
-    return when {
-        loadState.refresh is LoadState.Loading -> {
-            ShimmerEffect()
-            false
-        }
-
-        error != null -> {
-            EmptyScreen(error = error)
-            false
-        }
-
-        else -> {
-            true
-        }
-    }
-}
 
 @Composable
 fun ShimmerEffect() {

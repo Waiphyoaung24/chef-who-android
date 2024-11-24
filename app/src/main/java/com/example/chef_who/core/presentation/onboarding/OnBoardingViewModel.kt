@@ -9,8 +9,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
-    private val appEntryUseCases: AppEntryUseCases
+    private val appEntryUseCases: AppEntryUseCases,
 ) : ViewModel() {
+
 
     fun onEvent(onBoardingEvent: OnBoardingEvent) {
         when (onBoardingEvent) {

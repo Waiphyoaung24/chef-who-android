@@ -25,19 +25,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
 import com.example.chef_who.R
-import com.example.chef_who.core.domain.models.Article
 import com.example.chef_who.core.navigation.Route
 import com.example.chef_who.core.presentation.common.FoodList
-import com.example.chef_who.core.presentation.common.MealList
 import com.example.chef_who.customer.domain.Food
-import com.example.chef_who.customer.domain.listOfFood
 import com.example.chef_who.ui.theme.Dimens.MediumPadding1
 
 @Composable
 fun MenuListScreen(
     title: String,
     food: List<Food>,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (Food) -> Unit
 ) {
     Column(
         modifier = Modifier

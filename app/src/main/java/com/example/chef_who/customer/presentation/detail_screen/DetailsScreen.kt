@@ -30,20 +30,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.chef_who.R
+import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.customer.domain.Food
+import com.example.chef_who.customer.presentation.update.components.LoadImage
 
 
 @Composable
 fun DetailsScreen(
     data: Food,
-    event: (DetailsEvent) -> Unit,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    addToCart: () -> Unit
 ) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -57,8 +62,7 @@ fun DetailsScreen(
                     .padding(top = 20.dp, end = 30.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                CommonIconButton(icon = R.drawable.back, onClick = navigateUp)
-                CommonIconButton(icon = R.drawable.heart)
+                BackButtonTopBar(onBackClick = navigateUp)
             }
 
         }
@@ -71,16 +75,19 @@ fun DetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Image(
-                    painter = painterResource(id = data.image), contentDescription = "",
-                    modifier = Modifier
-                        .size(240.dp)
-                )
-
+                LoadImage(modifier = Modifier.size(240.dp), data.image)
                 Spacer(modifier = Modifier.height(20.dp))
-
-                Text(text = data.name, style = MaterialTheme.typography.displaySmall)
-                Text(text = "$${data.price}", style = MaterialTheme.typography.displaySmall)
+                Text(
+                    text = data.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "$${data.price}",
+                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
 
             }
         }
@@ -126,11 +133,12 @@ fun DetailsScreen(
         }
 
         item {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(14.dp))
             CommonButton(
                 text = "Add to cart",
                 backgroundColor = MaterialTheme.colorScheme.primary,
-                foregroundColor = Color.White
+                foregroundColor = Color.White,
+                addToCart = addToCart
             )
             Spacer(modifier = Modifier.height(15.dp))
         }
@@ -167,21 +175,19 @@ fun CommonButton(
     foregroundColor: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = Color.White,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    addToCart: () -> Unit
 ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
-        shape = RoundedCornerShape(30.dp)
+        shape = RoundedCornerShape(30.dp),
+        onClick = addToCart
     ) {
         Box(
             modifier = modifier
                 .background(backgroundColor)
-                .clickable {
-                    onClick()
-                }
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
