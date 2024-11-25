@@ -28,20 +28,28 @@ import com.example.chef_who.R
 import com.example.chef_who.core.navigation.Route
 import com.example.chef_who.core.presentation.common.FoodList
 import com.example.chef_who.customer.domain.Food
+import com.example.chef_who.customer.presentation.detail_screen.BackButtonTopBar
 import com.example.chef_who.ui.theme.Dimens.MediumPadding1
 
 @Composable
 fun MenuListScreen(
     title: String,
     food: List<Food>,
-    navigateToDetail: (Food) -> Unit
+    navigateToDetail: (Food) -> Unit,
+    navigateUp: () -> Unit
 ) {
+
+    Column(modifier = Modifier.statusBarsPadding().padding(start = 12.dp)) {
+        BackButtonTopBar(onBackClick = navigateUp)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
             .padding(top = 64.dp, start = MediumPadding1, end = MediumPadding1)
     ) {
+
 
         Text(
             text = title,

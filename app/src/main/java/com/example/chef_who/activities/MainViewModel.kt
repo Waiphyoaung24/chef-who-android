@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
     private val appEntryUseCases: AppEntryUseCases,
     private val authUseCases: AuthUseCases,
 ) : ViewModel() {
-    val user = mutableStateOf<User>(User(0, "", "", "", ""))
+    val user = mutableStateOf(User(0, "", "", "", ""))
     private val _splashCondition = mutableStateOf(true)
     var splashCondition: State<Boolean> = _splashCondition
     private val _startDestination = mutableStateOf(Route.ChefWhoNavigatorScreen.route)

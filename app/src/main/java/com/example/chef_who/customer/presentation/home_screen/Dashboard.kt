@@ -1,9 +1,6 @@
 package com.example.chef_who.customer.presentation.home_screen
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,56 +22,69 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.chef_who.R
-import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
+import com.example.chef_who.core.domain.models.Seller
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.presentation.update.components.ShowVerticalDivider
 
 
 @Composable
 fun ShowDashboard(
-    data: List<Dashboard.Item>,
+    mDataLayout: List<Dashboard.Item>,
+    mSellerList: List<Seller>,
     mCatIds: List<Category>,
     mCartItems: Int,
     navigateToCart: () -> Unit,
-    navigateToMenuList: (String) -> Unit
+    navigateToMenuList: (String) -> Unit,
+    onSearch: () -> Unit,
+    onValueChanged: (String) -> Unit,
+    keyword: String
+
 ) {
     Column {
         Spacer(Modifier.height(16.dp))
-        TopBar("Wai Phyo Aung", "Hi", navigateToCart = navigateToCart,mCartItems)
-        SearchBar(text = "", onValueChange = {}, readOnly = false) {}
+        TopBar("Wai Phyo Aung", "Hi", navigateToCart = navigateToCart, mCartItems)
+        SearchBar(
+            text = keyword,
+            onValueChange = onValueChanged,
+            readOnly = false,
+            onSearch = onSearch
+        )
         Spacer(Modifier.height(8.dp))
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             contentPadding = PaddingValues(vertical = dimensionResource(id = R.dimen.padding))
         ) {
 
-            itemsIndexed(items = data) { index, item ->
+            itemsIndexed(items = mDataLayout) { index, item ->
                 when (item.viewType) {
                     "horizontalScroll" -> ShowHorizontalElements(
                         item = item,
                         mCatIds = mCatIds
                     )
-
-                    "verticalScroll" -> ShowVerticalElements(
-                        item = item, navigateToMenuList = navigateToMenuList
-                    )
                 }
+
                 if (index != item.data.size) Spacer(modifier = Modifier.height(10.dp))
+
             }
+            item {
+                ShowVerticalElements(
+                    navigateToMenuList = navigateToMenuList,
+                    mSellerList = mSellerList
+                )
+            }
+
         }
+
     }
 }
 
@@ -113,36 +123,32 @@ private fun ShowHorizontalElements(item: Dashboard.Item, mCatIds: List<Category>
 
 @Composable
 private fun ShowVerticalElements(
-    item: Dashboard.Item,
+    mSellerList: List<Seller>,
     navigateToMenuList: (String) -> Unit,
 ) {
-    item.header?.let {
-        ShowHeader(
-            title = it.title,
-            hasMore = it.hasMore
-        )
-    }
-    item.data.forEachIndexed { index, data ->
-        when (data.viewType) {
-            "restaurantElement" -> ShowRestaurantElement(
-                item = data,
-                navigateToMenuList = navigateToMenuList,
-                onClick = {
-                    navigateToMenuList(data.title.toString())
-                }
 
-            )
+    ShowHeader(
+        title = "Popular Restaurants",
+        hasMore = true
+    )
 
-            else -> {
-                // do nothing
+    mSellerList.forEachIndexed { index, data ->
+
+        ShowRestaurantElement(
+            data = data,
+            navigateToMenuList = navigateToMenuList,
+            onClick = {
+                navigateToMenuList(data.id.toString())
             }
-        }
-        if (index != item.data.size) ShowVerticalDivider()
+
+        )
+
+
     }
 }
 
 @Composable
-fun TopBar(userName: String, value: String, navigateToCart: () -> Unit,cartItems : Int) {
+fun TopBar(userName: String, value: String, navigateToCart: () -> Unit, cartItems: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -193,7 +199,7 @@ fun TopBar(userName: String, value: String, navigateToCart: () -> Unit,cartItems
             )
         }
 
-        BadgedBox(badge = { Badge{ Text(cartItems.toString()) } }) {
+        BadgedBox(badge = { Badge { Text(cartItems.toString()) } }) {
 
             IconButton(onClick = navigateToCart) {
                 Icon(

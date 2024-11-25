@@ -20,12 +20,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.chef_who.customer.presentation.update.components.LoadImage
 import com.example.chef_who.R
+import com.example.chef_who.core.domain.models.Seller
 import com.example.chef_who.customer.domain.Dashboard
 
 
 @Composable
 fun ShowRestaurantElement(
-    item: Dashboard.Item.SubItem,
+    data : Seller,
     navigateToMenuList: (String) -> Unit,
     onClick: () -> Unit
 ) {
@@ -34,7 +35,7 @@ fun ShowRestaurantElement(
             .padding(dimensionResource(id = R.dimen.padding))
             .clickable(onClick = onClick)
     ) {
-        RestaurantImage(url = item.imageUrl)
+        RestaurantImage(url = data.imageUrl)
         Spacer(Modifier.width(24.dp))
         Column(
             modifier = Modifier
@@ -42,7 +43,7 @@ fun ShowRestaurantElement(
                 .padding(horizontal = dimensionResource(id = R.dimen.padding))
                 .align(Alignment.CenterVertically)
         ) {
-            RestaurantInfo(item = item)
+            RestaurantInfo(item = data)
         }
     }
 }
@@ -58,11 +59,11 @@ private fun RestaurantImage(url: String) {
 }
 
 @Composable
-private fun RestaurantInfo(item: Dashboard.Item.SubItem) {
+private fun RestaurantInfo(item: Seller) {
     val title = item.title ?: "Name"
     val subTitle = item.subTitle ?: "Caption"
-    val rating = "${item.meta?.rating}" ?: "4.0"
-    val reviewCount = "${item.meta?.reviewCount}" ?: "500+ reviews"
+    val rating = "${item.meta.rating}" ?: "4.0"
+    val reviewCount = "${item.meta.reviewCount}" ?: "500+ reviews"
 
 
     Text(

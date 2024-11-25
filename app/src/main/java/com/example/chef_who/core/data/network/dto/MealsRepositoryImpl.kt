@@ -6,6 +6,8 @@ import androidx.paging.PagingData
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
 import com.example.chef_who.core.domain.models.FoodMenu
+import com.example.chef_who.core.domain.models.Order
+import com.example.chef_who.core.domain.models.Seller
 import com.example.chef_who.core.domain.repository.MealsRepository
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.domain.Food
@@ -17,24 +19,18 @@ class MealsRepositoryImpl(
 
 
 
-    override fun getFoodMenu(sources: List<String>): Flow<PagingData<FoodMenu>> {
-        return Pager(
-            config = PagingConfig(pageSize = 10),
-            pagingSourceFactory = {
-                MealsPagingSource(
-                    mealsApi = mealsApi,
-                    sources = sources.joinToString(separator = ",")
-                )
-            }
-        ).flow
+
+
+    override suspend fun search(keyword : String): List<Food> {
+        return mealsApi.search(keyword)
     }
 
-    override fun searchCategory(keyword : String): Flow<PagingData<Category>> {
-        TODO("Not yet implemented")
+    override suspend fun getMenuList(catId :String,sellerId :String): List<Food> {
+        return mealsApi.getMenuList(catId,sellerId)
     }
 
-    override suspend fun getMenuList(): List<Food> {
-        return mealsApi.getMenuList()
+    override suspend fun createOrder(order: Order): ResponseObject {
+        return mealsApi.createOrder(order)
     }
 
 
@@ -50,6 +46,10 @@ class MealsRepositoryImpl(
 
     override suspend fun getCartList(): List<Cart> {
         return mealsApi.getCartIdList()
+    }
+
+    override suspend fun getSellerList(): List<Seller> {
+        return mealsApi.getSellerList()
     }
 
 

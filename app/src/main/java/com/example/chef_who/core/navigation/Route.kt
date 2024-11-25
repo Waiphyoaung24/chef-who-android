@@ -11,11 +11,13 @@ sealed class Route(
 
     object MenuListScreen : Route(route = "menuListScreen")
 
-    object SearchScreen : Route(route = "searchScreen")
 
     object BookmarkScreen : Route(route = "bookMarkScreen")
 
     object DetailsScreen : Route(route = "detailsScreen")
+
+    object UserDashBoardScreen : Route(route = "userDashBoardScreen")
+
 
     object ProfileScreen : Route(route = "profileScreen")
 

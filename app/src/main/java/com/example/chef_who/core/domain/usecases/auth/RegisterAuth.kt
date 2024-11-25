@@ -11,7 +11,7 @@ class RegisterAuth(
 ) {
     var isUserRegister : Boolean = false
     suspend fun createUser(user: User): Boolean {
-        if(mUserRepository.register(user).messasge == "success"){
+        if(mUserRepository.register(user).message == "success"){
             isUserRegister = true
         }
         return isUserRegister

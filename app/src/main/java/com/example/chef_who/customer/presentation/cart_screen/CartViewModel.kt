@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
+import com.example.chef_who.core.domain.models.Order
 import com.example.chef_who.core.domain.usecases.app_entry.AppEntryUseCases
 import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
 import com.google.gson.Gson
@@ -31,37 +32,11 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val mAppEntryUseCases: AppEntryUseCases,
+    private val mealsUseCases: MealsUseCases
 ) : ViewModel() {
     private val _cartItems = mutableStateOf<List<Cart>>(emptyList())
     val cartItems: State<List<Cart>> = _cartItems
 
-    //
-//
-//
-//    // Add item to the cart
-//    fun addToCart(item: Cart) {
-//        _cartItems.value = _cartItems.value.toMutableList().apply {
-//            val existingItem = find { it.id == item.id }
-//            if (existingItem != null) {
-//                remove(existingItem)
-//                add(existingItem.copy(quantity = existingItem.quantity + item.quantity))
-//            } else {
-//                add(item)
-//            }
-//        }
-//    }
-//
-//    // Remove item from the cart
-//    fun removeFromCart(itemId: Int) {
-//        _cartItems.value = _cartItems.value.toMutableList().apply {
-//            removeIf { it.id == itemId }
-//        }
-//    }
-//
-//    // Clear the cart
-//    fun clearCart() {
-//        _cartItems.value = emptyList()
-//    }
     init {
         // Load cart items from DataStore
         viewModelScope.launch {
@@ -70,10 +45,11 @@ class CartViewModel @Inject constructor(
             }
         }
     }
+
     fun addToCart(item: Cart) {
         viewModelScope.launch {
             val currentCart = _cartItems.value.toMutableList()
-            val existingItem = currentCart.find { it.id == item.id }
+            val existingItem = currentCart.find { it.menu_item_id == item.menu_item_id }
             if (existingItem != null) {
                 currentCart.remove(existingItem)
                 currentCart.add(existingItem.copy(quantity = existingItem.quantity + item.quantity))
@@ -82,6 +58,20 @@ class CartViewModel @Inject constructor(
             }
             mAppEntryUseCases.saveCartItem.invoke(currentCart)
             _cartItems.value = currentCart
+        }
+    }
+
+    fun createOrder() {
+        viewModelScope.launch {
+            val order = Order("1", cartItems.value)
+            val data = mealsUseCases.createOrder.invoke(order)
+            if (data.message=="success") {
+                //send user to order detail screen
+                Log.d("success", "successfully created")
+            } else {
+                Log.d("failed", "order failed")
+
+            }
         }
     }
 

@@ -21,12 +21,13 @@ import com.example.chef_who.core.domain.usecases.app_entry.SaveCartItem
 import com.example.chef_who.core.domain.usecases.auth.AuthUseCases
 import com.example.chef_who.core.domain.usecases.auth.LoginAuth
 import com.example.chef_who.core.domain.usecases.auth.RegisterAuth
+import com.example.chef_who.core.domain.usecases.meals.CreateOrder
 import com.example.chef_who.core.domain.usecases.meals.DeleteMeals
 import com.example.chef_who.core.domain.usecases.meals.GetCartList
 import com.example.chef_who.core.domain.usecases.meals.GetCategoryIds
 import com.example.chef_who.core.domain.usecases.meals.GetHomeType
-import com.example.chef_who.core.domain.usecases.meals.GetMeals
 import com.example.chef_who.core.domain.usecases.meals.GetMenuList
+import com.example.chef_who.core.domain.usecases.meals.GetSellerList
 import com.example.chef_who.core.domain.usecases.meals.InsertMeals
 import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
 import com.example.chef_who.core.domain.usecases.meals.SearchMeals
@@ -60,11 +61,9 @@ object AppModule {
     ): AppEntryUseCases = AppEntryUseCases(
         readAppEntry = ReadAppEntry(localUserManger),
         saveAppEntry = SaveAppEntry(localUserManger),
-        saveCartItem =  SaveCartItem(localUserManger),
+        saveCartItem = SaveCartItem(localUserManger),
         getCartItems = GetCartItems(localUserManger)
     )
-
-
 
 
     @Provides
@@ -108,7 +107,6 @@ object AppModule {
         mealsDao: MealsDao
     ): MealsUseCases {
         return MealsUseCases(
-            getMeals = GetMeals(mealsRepository),
             searchMeals = SearchMeals(mealsRepository),
             insertMeals = InsertMeals(mealsDao),
             deleteMeals = DeleteMeals(mealsDao),
@@ -117,7 +115,9 @@ object AppModule {
             mHomeType = GetHomeType(mealsRepository),
             getCategoryIds = GetCategoryIds(mealsRepository),
             getMenuList = GetMenuList(mealsRepository),
-            getCartIds = GetCartList(mealsRepository)
+            getCartIds = GetCartList(mealsRepository),
+            createOrder = CreateOrder(mealsRepository),
+            getSellerList = GetSellerList(mealsRepository)
         )
     }
 

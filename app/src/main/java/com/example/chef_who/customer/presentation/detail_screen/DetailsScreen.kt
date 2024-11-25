@@ -46,7 +46,7 @@ import com.example.chef_who.customer.presentation.update.components.LoadImage
 fun DetailsScreen(
     data: Food,
     navigateUp: () -> Unit,
-    addToCart: () -> Unit
+    addToCart: () -> Unit,
 ) {
 
     LazyColumn(
@@ -59,7 +59,7 @@ fun DetailsScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 20.dp, end = 30.dp),
+                    .padding(top = 18.dp, start = 12.dp, end = 30.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 BackButtonTopBar(onBackClick = navigateUp)

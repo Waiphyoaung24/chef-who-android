@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 class GetMenuList(
     private val mealsRepository: MealsRepository
 ) {
-    suspend operator fun invoke(): List<Food> {
-        return mealsRepository.getMenuList()
+    suspend operator fun invoke(sellerId :String,catId :String): List<Food> {
+        return mealsRepository.getMenuList(sellerId,catId)
     }
 }

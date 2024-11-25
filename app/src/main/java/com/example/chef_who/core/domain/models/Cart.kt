@@ -4,7 +4,7 @@ import androidx.room.Entity
 
 @Entity
 data class Cart(
-    val id : Int,
+    val menu_item_id : Int,
     val img : String,
     val status : String,
     val name: String,

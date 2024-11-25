@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.customer.presentation.detail_screen.BackButtonTopBar
@@ -42,18 +43,29 @@ import com.example.chef_who.customer.presentation.detail_screen.BackButtonTopBar
 @Composable
 fun CartScreen(
     carts: List<Cart>,
-    navigateUp: ()->Unit,
-    navigateToDetails: (String) -> Unit
-) {
+    navigateUp: () -> Unit,
+    createOrder:()->Unit,
+    navigateToDetails: (String) -> Unit,
+
+    ) {
 
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize()) {
-        BackButtonTopBar(onBackClick = navigateUp)
-        BasicText(
-            text = "My Shopping Cart",
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
-        )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Spacer(Modifier.height(32.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BackButtonTopBar(onBackClick = navigateUp)
+            BasicText(
+                text = "My Shopping Cart",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+            )
+        }
         if (carts.isEmpty()) {
             BasicText(
                 text = "Your Cart is Empty",
@@ -90,7 +102,10 @@ fun CartScreen(
                                     BasicText(
                                         text = item.name,
                                         modifier = Modifier.weight(1f),
-                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp
+                                        )
                                     )
                                     BasicText(
                                         text = "$${item.price}",
@@ -102,7 +117,11 @@ fun CartScreen(
                                 Spacer(Modifier.height(4.dp))
                                 BasicText(
                                     text = "",
-                                    style =MaterialTheme.typography.bodySmall.copy(color = Color(0xFF757575))
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        color = Color(
+                                            0xFF757575
+                                        )
+                                    )
                                 )
 
                             }
@@ -132,36 +151,46 @@ fun CartScreen(
                     }
                 }
             }
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Color(0xFFE0E0E0))
-            )
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color(0xFFE0E0E0))
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    BasicText("Subtotal", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold))
-                    BasicText("$217.00", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                    BasicText(
+                        "Subtotal",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
+                    )
+                    BasicText(
+                        "$217.00",
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    )
                 }
 
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(4.dp))
-                        .clickable(role = Role.Button) { /* TODO */ }
+                        .clickable(onClick = createOrder)
                         .background(Color(0xFF3F51B5))
                         .fillMaxWidth()
                         .padding(vertical = 12.dp, horizontal = 16.dp),
                     contentAlignment = Alignment.Center) {
-                    BasicText("Go to checkout", style = MaterialTheme.typography.bodySmall.copy(color = Color.White))
+                    BasicText(
+                        "Go to checkout",
+                        style = MaterialTheme.typography.bodySmall.copy(color = Color.White)
+                    )
                 }
             }
         }

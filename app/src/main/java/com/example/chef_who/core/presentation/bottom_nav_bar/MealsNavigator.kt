@@ -35,56 +35,67 @@ import com.example.chef_who.customer.presentation.detail_screen.DetailsScreen
 import com.example.chef_who.customer.presentation.home_screen.ShowDashboard
 import com.example.chef_who.customer.presentation.home_screen.DashBoardViewModel
 import com.example.chef_who.customer.presentation.home_screen.MenuListScreen
+import com.example.chef_who.customer.presentation.user_dashboard.UserDashBoardScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealsNavigator() {
 
-    val bottomNavigationItems = remember {
-        listOf(
-            BottomNavigationItem(icon = R.drawable.ic_home, text = "Home"),
-            BottomNavigationItem(icon = R.drawable.ic_search, text = "Search"),
-            BottomNavigationItem(icon = R.drawable.baseline_attribution_24, text = "Profile"),
-        )
-    }
+
+
 
     val navController = rememberNavController()
     val backStackState = navController.currentBackStackEntryAsState().value
     var selectedItem by rememberSaveable {
         mutableStateOf(0)
     }
+    val isBottomBarVisible = remember(key1 = backStackState) {
+        navController.currentDestination?.route == Route.MenuListScreen.route
+    }
+
+    val bottomNavigationItems = remember {
+        listOf(
+            BottomNavigationItem(icon = R.drawable.ic_home, text = "Home"),
+            BottomNavigationItem(icon = R.drawable.baseline_article_24, text = "Dashboard"),
+            BottomNavigationItem(icon = R.drawable.baseline_attribution_24, text = "Profile"),
+        )
+    }
     selectedItem = when (backStackState?.destination?.route) {
         Route.HomeScreen.route -> 0
-        Route.SearchScreen.route -> 1
+        Route.UserDashBoardScreen.route -> 1
         Route.RegisterScreen.route -> 2
         else -> 0
     }
 
 
+
     Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
 
-        NewsBottomNavigation(
-            items = bottomNavigationItems,
-            selectedItem = selectedItem,
-            onItemClick = { index ->
-                when (index) {
-                    0 -> navigateToTab(
-                        navController = navController,
-                        route = Route.HomeScreen.route
-                    )
 
-                    1 -> navigateToTab(
-                        navController = navController,
-                        route = Route.SearchScreen.route
-                    )
+        if (!isBottomBarVisible) {
+            NewsBottomNavigation(
+                items = bottomNavigationItems,
+                selectedItem = selectedItem,
+                onItemClick = { index ->
+                    when (index) {
+                        0 -> navigateToTab(
+                            navController = navController,
+                            route = Route.HomeScreen.route
+                        )
 
-                    2 -> navigateToTab(
-                        navController = navController,
-                        route = Route.RegisterScreen.route
-                    )
+                        1 -> navigateToTab(
+                            navController = navController,
+                            route = Route.UserDashBoardScreen.route
+                        )
+
+                        2 -> navigateToTab(
+                            navController = navController,
+                            route = Route.RegisterScreen.route
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
 
     }) {
         val bottomPadding = it.calculateBottomPadding()
@@ -93,28 +104,56 @@ fun MealsNavigator() {
             startDestination = Route.HomeScreen.route,
             modifier = Modifier.padding(bottom = bottomPadding)
         ) {
+
+            //Main Home Screen Compose
             composable(route = Route.HomeScreen.route) { backStackEntry ->
                 val viewModel: DashBoardViewModel = hiltViewModel()
                 val viewModelCart: CartViewModel = hiltViewModel()
                 ShowDashboard(
                     viewModel.mData.value,
+                    viewModel.mSellerList.value,
                     viewModel.mCategoryIds.value,
                     viewModelCart.cartItems.value.size,
-                    navigateToMenuList = { i ->
+                    navigateToMenuList = { it ->
                         navigateToTab(
                             navController = navController,
-                            route = Route.MenuListScreen.route
+                            route = Route.MenuListScreen.route,
                         )
+                        viewModel.fetchMenuListByCategory(it, "seller")
+                    },
+                    keyword = viewModel.searchKeyword.value,
+                    onValueChanged = { newValue -> viewModel.searchKeyword.value = newValue },
+                    onSearch = {
+                        viewModel.fetchMenuListByCategory(viewModel.searchKeyword.value, "search")
+                        navigateToMenuList(navController)
                     },
                     navigateToCart = { navigateToTab(navController, Route.BookmarkScreen.route) }
                 )
             }
+
+            //Menu List Screen Compose
+
             composable(route = Route.MenuListScreen.route) { backStackEntry ->
-                val viewModel: DashBoardViewModel = hiltViewModel()
-                viewModel.getMenuList()
+                val viewModel: DashBoardViewModel =
+                    hiltViewModel(navController.getBackStackEntry(Route.HomeScreen.route))
+
+                LaunchedEffect(
+                    key1 = viewModel.sellerId.value,
+                    key2 = viewModel.searchKeyword.value
+                ) {
+                    if (viewModel.sellerId.value.isNotEmpty()) {
+                        viewModel.resetMenuLoadedStatus()
+                        viewModel.getMenuList()
+                    } else if (viewModel.searchKeyword.value.isNotEmpty()) {
+                        viewModel.resetMenuLoadedStatus()
+                        viewModel.searchMenuList()
+
+                    }
+                }
                 MenuListScreen(
                     title = "Delicious\nfood for you",
-                    food = viewModel.mMenuList.value,
+                    navigateUp = { navController.navigateUp() },
+                    food = viewModel.menuList.value,
                     navigateToDetail = { i ->
                         navigateToDetails(
                             navController = navController,
@@ -123,6 +162,8 @@ fun MealsNavigator() {
                     })
             }
 
+
+            //Food Detail Screen Compose
             composable(route = Route.DetailsScreen.route) {
                 val viewModelCart: CartViewModel = hiltViewModel()
                 val context = LocalContext.current
@@ -131,18 +172,20 @@ fun MealsNavigator() {
 
                         val data =
                             Cart(it.id, it.image, "in process", it.name, it.price.toDouble(), 1)
-                        DetailsScreen(data = it,
+                        DetailsScreen(
+                            data = it,
                             navigateUp = { navController.navigateUp() },
-                            addToCart = { viewModelCart.addToCart(data) }
+                            addToCart = { viewModelCart.addToCart(data) },
 
-                        )
+                            )
                     }
 
             }
+
+            //Registration Screen Compose
+
             composable(route = Route.RegisterScreen.route) {
                 val viewModel: MainViewModel = hiltViewModel()
-
-
                 SignUpScreen(
                     onRegister = viewModel::createUser,
                     onTextChange = viewModel::onTextChange,
@@ -155,12 +198,20 @@ fun MealsNavigator() {
 
             }
 
+            //User Dashboard Screen Compose
+            composable(route = Route.UserDashBoardScreen.route) {
+               UserDashBoardScreen()
+            }
+
+            //Cart (Before checkout) Screen Compose
             composable(route = Route.BookmarkScreen.route) {
                 val viewModel: CartViewModel = hiltViewModel()
                 CartScreen(
                     carts = viewModel.cartItems.value,
                     navigateToDetails = {},
-                    navigateUp = { navController.navigateUp() })
+                    navigateUp = { navController.navigateUp() },
+                    createOrder = { viewModel.createOrder() }
+                )
             }
 
         }
@@ -196,8 +247,8 @@ private fun navigateToDetails(navController: NavController, food: Food) {
     )
 }
 
-private fun navigateToMenuList(navController: NavController, sellerId: String) {
-    navController.currentBackStackEntry?.savedStateHandle?.set("sellerId", sellerId)
+private fun navigateToMenuList(navController: NavController) {
+
     navController.navigate(
         route = Route.MenuListScreen.route
     )

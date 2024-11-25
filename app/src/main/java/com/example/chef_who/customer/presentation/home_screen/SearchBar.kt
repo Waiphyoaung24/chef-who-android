@@ -60,7 +60,7 @@ fun SearchBar(
                 .padding(horizontal = 17.dp)
                 .searchBar(),
             value = text,
-            onValueChange = onValueChange,
+            onValueChange = {onValueChange(it)},
             readOnly = readOnly,
             leadingIcon = {
                 Icon(
