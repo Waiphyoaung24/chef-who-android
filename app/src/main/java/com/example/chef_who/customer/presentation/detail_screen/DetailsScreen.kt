@@ -83,7 +83,7 @@ fun DetailsScreen(
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "$${data.price}",
+                    text = "£${data.price}",
                     fontSize = 18.sp,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold

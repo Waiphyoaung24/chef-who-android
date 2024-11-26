@@ -3,13 +3,11 @@ package com.example.chef_who.core.data.network.dto
 import android.graphics.pdf.PdfDocument.Page
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
-import com.example.chef_who.core.domain.models.FoodMenu
 import com.example.chef_who.core.domain.models.Order
+import com.example.chef_who.core.domain.models.OrderHistoryResponse
 import com.example.chef_who.core.domain.models.Seller
-import com.example.chef_who.core.util.Constants
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.domain.Food
-import kotlinx.coroutines.flow.Flow
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -57,5 +55,11 @@ interface ChefWhoApi {
 
     @GET("getSellersList")
     suspend fun getSellerList(): List<Seller>
+
+    @GET("getOrderHistory")
+    suspend fun getOrderHistoryList(@Query("user_id")userId : String): List<OrderHistoryResponse>
+
+    @GET("getActiveOrder")
+    suspend fun getActiveOrders(): List<Order>
 
 }

@@ -12,4 +12,6 @@ data class MealsUseCases(
     val getCartIds: GetCartList,
     val createOrder: CreateOrder,
     val getSellerList: GetSellerList,
+    val getOrderHistory : GetOrderHistory,
+    val getActiveOrders : GetActiveOrders
 )

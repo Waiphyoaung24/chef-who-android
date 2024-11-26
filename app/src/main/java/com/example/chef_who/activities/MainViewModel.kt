@@ -50,6 +50,7 @@ class MainViewModel @Inject constructor(
 
             }
 
+
             delay(500)
             _splashCondition.value = false
 

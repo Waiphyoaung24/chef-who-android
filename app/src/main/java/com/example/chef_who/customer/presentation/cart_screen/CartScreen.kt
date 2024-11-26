@@ -44,7 +44,7 @@ import com.example.chef_who.customer.presentation.detail_screen.BackButtonTopBar
 fun CartScreen(
     carts: List<Cart>,
     navigateUp: () -> Unit,
-    createOrder:()->Unit,
+    createOrder: () -> Unit,
     navigateToDetails: (String) -> Unit,
 
     ) {
@@ -77,78 +77,7 @@ fun CartScreen(
         } else {
             LazyColumn(Modifier.defaultMinSize(420.dp)) {
                 itemsIndexed(carts) { i, item ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min)
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        AsyncImage(
-                            model = item.img,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
-                                .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(4.dp))
-                                .size(96.dp),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop
-                        )
-                        Column {
-                            Column {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-                                    BasicText(
-                                        text = item.name,
-                                        modifier = Modifier.weight(1f),
-                                        style = MaterialTheme.typography.bodySmall.copy(
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 13.sp
-                                        )
-                                    )
-                                    BasicText(
-                                        text = "$${item.price}",
-                                        maxLines = 1,
-                                        modifier = Modifier.padding(start = 16.dp),
-                                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
-                                    )
-                                }
-                                Spacer(Modifier.height(4.dp))
-                                BasicText(
-                                    text = "",
-                                    style = MaterialTheme.typography.bodySmall.copy(
-                                        color = Color(
-                                            0xFF757575
-                                        )
-                                    )
-                                )
-
-                            }
-                            Spacer(Modifier.weight(1f))
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 2.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Bottom
-                            ) {
-                                BasicText(
-                                    text = "Quantity : ${item.quantity}",
-                                    style = MaterialTheme.typography.bodySmall
-                                )
-                                BasicText(
-                                    text = "Remove",
-                                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Red),
-                                    modifier = Modifier
-                                        .offset(x = 8.dp, y = 4.dp)
-                                        .clip(RoundedCornerShape(4.dp))
-                                        .clickable { /* TODO */ }
-                                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                                )
-                            }
-                        }
-                    }
+                    CartItem(modifier = Modifier,item)
                 }
             }
 
@@ -174,7 +103,7 @@ fun CartScreen(
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.SemiBold)
                     )
                     BasicText(
-                        "$217.00",
+                        "£217.00",
                         style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                     )
                 }
@@ -186,12 +115,89 @@ fun CartScreen(
                         .background(Color(0xFF3F51B5))
                         .fillMaxWidth()
                         .padding(vertical = 12.dp, horizontal = 16.dp),
-                    contentAlignment = Alignment.Center) {
+                    contentAlignment = Alignment.Center
+                ) {
                     BasicText(
                         "Go to checkout",
                         style = MaterialTheme.typography.bodySmall.copy(color = Color.White)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun CartItem(modifier: Modifier = Modifier,item : Cart) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        AsyncImage(
+            model = item.img,
+            modifier = Modifier
+                .clip(RoundedCornerShape(4.dp))
+                .border(1.dp, Color(0xFFE0E0E0), RoundedCornerShape(4.dp))
+                .size(96.dp),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+        Column {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    BasicText(
+                        text = item.name,
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
+                    )
+                    BasicText(
+                        text = "£${item.price}",
+                        maxLines = 1,
+                        modifier = Modifier.padding(start = 16.dp),
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+                    )
+                }
+                Spacer(Modifier.height(4.dp))
+                BasicText(
+                    text = "",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        color = Color(
+                            0xFF757575
+                        )
+                    )
+                )
+
+            }
+            Spacer(Modifier.weight(1f))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 2.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                BasicText(
+                    text = "Quantity : ${item.quantity}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                BasicText(
+                    text = "Remove",
+                    style = MaterialTheme.typography.bodySmall.copy(color = Color.Red),
+                    modifier = Modifier
+                        .offset(x = 8.dp, y = 4.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .clickable { /* TODO */ }
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
             }
         }
     }

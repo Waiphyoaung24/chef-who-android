@@ -23,10 +23,12 @@ import com.example.chef_who.core.domain.usecases.auth.LoginAuth
 import com.example.chef_who.core.domain.usecases.auth.RegisterAuth
 import com.example.chef_who.core.domain.usecases.meals.CreateOrder
 import com.example.chef_who.core.domain.usecases.meals.DeleteMeals
+import com.example.chef_who.core.domain.usecases.meals.GetActiveOrders
 import com.example.chef_who.core.domain.usecases.meals.GetCartList
 import com.example.chef_who.core.domain.usecases.meals.GetCategoryIds
 import com.example.chef_who.core.domain.usecases.meals.GetHomeType
 import com.example.chef_who.core.domain.usecases.meals.GetMenuList
+import com.example.chef_who.core.domain.usecases.meals.GetOrderHistory
 import com.example.chef_who.core.domain.usecases.meals.GetSellerList
 import com.example.chef_who.core.domain.usecases.meals.InsertMeals
 import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
@@ -117,7 +119,9 @@ object AppModule {
             getMenuList = GetMenuList(mealsRepository),
             getCartIds = GetCartList(mealsRepository),
             createOrder = CreateOrder(mealsRepository),
-            getSellerList = GetSellerList(mealsRepository)
+            getSellerList = GetSellerList(mealsRepository),
+            getActiveOrders = GetActiveOrders(mealsRepository),
+            getOrderHistory = GetOrderHistory(mealsRepository)
         )
     }
 

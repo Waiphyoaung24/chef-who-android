@@ -1,15 +1,13 @@
 package com.example.chef_who.core.presentation.bottom_nav_bar
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,13 +33,13 @@ import com.example.chef_who.customer.presentation.detail_screen.DetailsScreen
 import com.example.chef_who.customer.presentation.home_screen.ShowDashboard
 import com.example.chef_who.customer.presentation.home_screen.DashBoardViewModel
 import com.example.chef_who.customer.presentation.home_screen.MenuListScreen
+import com.example.chef_who.customer.presentation.user_dashboard.CustomerDashboardViewModel
 import com.example.chef_who.customer.presentation.user_dashboard.UserDashBoardScreen
+import com.example.chef_who.customer.presentation.user_profile.UserProfile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealsNavigator() {
-
-
 
 
     val navController = rememberNavController()
@@ -52,6 +50,9 @@ fun MealsNavigator() {
     val isBottomBarVisible = remember(key1 = backStackState) {
         navController.currentDestination?.route == Route.MenuListScreen.route
     }
+//    val isFABVisible = remember(key1 = backStackState) {
+//        navController.currentDestination?.route == Route.UserDashBoardScreen.route
+//    }
 
     val bottomNavigationItems = remember {
         listOf(
@@ -69,35 +70,69 @@ fun MealsNavigator() {
 
 
 
-    Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = {
+    Scaffold(modifier = Modifier.fillMaxSize(),
+
+//        floatingActionButton = {
+//
+//            if (isFABVisible) {
+//                val context = LocalContext.current
+//                val itemList = listOf(
+//                    FABItem(icon = Icons.Rounded.Create, text = "Create"),
+//                    FABItem(icon = Icons.Rounded.Edit, text = "Edit"),
+//                )
+//
+//                CustomExpandableFAB(
+//                    items = itemList,
+//                    onItemClick = { item ->
+//
+//                        when (item.text) {
+//                            "Create" -> Toast.makeText(
+//                                context,
+//                                "create clicked",
+//                                Toast.LENGTH_SHORT
+//                            ).show()
+//
+//                            "Edit" -> Toast.makeText(
+//                                context,
+//                                "Edit clicked",
+//                                Toast.LENGTH_SHORT
+//                            )
+//                                .show()
+//                        }
+//
+//                    }
+//                )
+//            }
+//        },
+        bottomBar = {
 
 
-        if (!isBottomBarVisible) {
-            NewsBottomNavigation(
-                items = bottomNavigationItems,
-                selectedItem = selectedItem,
-                onItemClick = { index ->
-                    when (index) {
-                        0 -> navigateToTab(
-                            navController = navController,
-                            route = Route.HomeScreen.route
-                        )
+            if (!isBottomBarVisible) {
+                NewsBottomNavigation(
+                    items = bottomNavigationItems,
+                    selectedItem = selectedItem,
+                    onItemClick = { index ->
+                        when (index) {
+                            0 -> navigateToTab(
+                                navController = navController,
+                                route = Route.HomeScreen.route
+                            )
 
-                        1 -> navigateToTab(
-                            navController = navController,
-                            route = Route.UserDashBoardScreen.route
-                        )
+                            1 -> navigateToTab(
+                                navController = navController,
+                                route = Route.UserDashBoardScreen.route
+                            )
 
-                        2 -> navigateToTab(
-                            navController = navController,
-                            route = Route.RegisterScreen.route
-                        )
+                            2 -> navigateToTab(
+                                navController = navController,
+                                route = Route.RegisterScreen.route
+                            )
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
 
-    }) {
+        }) {
         val bottomPadding = it.calculateBottomPadding()
         NavHost(
             navController = navController,
@@ -186,21 +221,35 @@ fun MealsNavigator() {
 
             composable(route = Route.RegisterScreen.route) {
                 val viewModel: MainViewModel = hiltViewModel()
-                SignUpScreen(
-                    onRegister = viewModel::createUser,
-                    onTextChange = viewModel::onTextChange,
-                    user = viewModel.user.value,
-                    navigateToHomeScreen = { navigateToTab(navController, Route.HomeScreen.route) }
-                )
-                if (viewModel.userRegistered.value) {
-                    navigateToTab(navController, Route.HomeScreen.route)
+
+                if (!viewModel.userRegistered.value) {
+                    navigateToTab(navController, Route.ProfileScreen.route)
+                } else {
+                    SignUpScreen(
+                        onRegister = viewModel::createUser,
+                        onTextChange = viewModel::onTextChange,
+                        user = viewModel.user.value,
+                        navigateToHomeScreen = {
+                            navigateToTab(
+                                navController,
+                                Route.HomeScreen.route
+                            )
+                        }
+                    )
                 }
 
+            }
+            //User Dashboard Screen Compose
+            composable(route = Route.ProfileScreen.route) {
+                UserProfile(onBackBtnClick = {})
             }
 
             //User Dashboard Screen Compose
             composable(route = Route.UserDashBoardScreen.route) {
-               UserDashBoardScreen()
+                val viewModel: CustomerDashboardViewModel = hiltViewModel()
+                val data = viewModel.mHistoryList
+                viewModel.refreshData()
+                UserDashBoardScreen(data.value)
             }
 
             //Cart (Before checkout) Screen Compose

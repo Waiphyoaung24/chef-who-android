@@ -73,14 +73,14 @@ fun SearchBar(
             placeholder = {
                 Text(
                     text = "Search",
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelMedium,
                     color = colorResource(id = R.color.placeholder)
                 )
             },
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(50.dp),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent,
                 errorContainerColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
@@ -105,7 +105,7 @@ fun Modifier.searchBar(): Modifier = composed {
     if (!isSystemInDarkTheme()) {
         border(
             width = 1.dp,
-            color = Color.Black,
+            color = Color.Black.copy(alpha = 0.5f),
             shape = MaterialTheme.shapes.extraSmall
         )
     } else {

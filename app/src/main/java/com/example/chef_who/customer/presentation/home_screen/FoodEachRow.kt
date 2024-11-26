@@ -52,7 +52,7 @@ fun FoodEachRow(
                 Spacer(Modifier.height(5.dp))
                 Text(food.name, style = MaterialTheme.typography.headlineMedium)
                 Spacer(modifier = Modifier.height(5.dp))
-                Text("$${food.price}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                Text("£${food.price}", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }
