@@ -28,6 +28,9 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Accessibility
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -46,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -64,8 +68,10 @@ import com.example.chef_who.core.domain.models.User
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     onTextChange: (String, String) -> Unit,
-    onRegister: () -> Unit, user: User,
-    navigateToHomeScreen:()->Unit
+    onRegister: () -> Unit,
+    user: User,
+    navigateToHomeScreen: () -> Unit,
+    navigateToLoginScreen: (Int) -> Unit
 ) {
 
 
@@ -94,30 +100,35 @@ fun SignUpScreen(
             "First Name",
             user.first_name,
             onTextChange = onTextChange,
-            painterResources = painterResource(R.drawable.ic_cart)
+            imageVector = Icons.Default.Accessibility
         )
         MyTextField(
             "Last Name",
             user.last_name,
             onTextChange = onTextChange,
-            painterResources = painterResource(R.drawable.ic_cart)
+            imageVector = Icons.Default.Accessibility
         )
         MyTextField(
             "Email",
             user.email,
             onTextChange = onTextChange,
-            painterResources = painterResource(R.drawable.ic_cart)
+            imageVector = Icons.Default.Email
         )
         MyPasswordTextField(
             "Password",
             user.password,
             onTextChange,
-            painterResources = painterResource(R.drawable.ic_cart)
+            imageVector = Icons.Default.Password
         )
         CheckBoxPolicy(modifier = Modifier)
-        Spacer(Modifier.heightIn(24.dp))
+        Spacer(Modifier.heightIn(12.dp))
         ButtonComponent(modifier = Modifier, "Sign Up", onRegister = onRegister)
-
+        Spacer(modifier = Modifier.height(12.dp))
+        RedirectLoginText(
+            modifier = Modifier,
+            "Already Registered? Click here to Login",
+            onClick = navigateToLoginScreen
+        )
     }
 }
 
@@ -127,7 +138,7 @@ fun MyTextField(
     labelValue: String,
     value: String,
     onTextChange: (String, String) -> Unit,
-    painterResources: Painter
+    imageVector: ImageVector
 ) {
 
     OutlinedTextField(
@@ -139,7 +150,7 @@ fun MyTextField(
         onValueChange = {
             onTextChange(it, labelValue)
         },
-        leadingIcon = { Icon(painter = painterResources, contentDescription = "") },
+        leadingIcon = { Icon(imageVector = imageVector, contentDescription = "") },
         label = { Text(text = labelValue) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -157,7 +168,7 @@ fun MyPasswordTextField(
     value: String,
     onTextChange: (String, String) -> Unit,
     modifier: Modifier = Modifier,
-    painterResources: Painter
+    imageVector: ImageVector
 ) {
 
     val passwordVisible = remember { mutableStateOf(false) }
@@ -170,7 +181,7 @@ fun MyPasswordTextField(
         onValueChange = { onTextChange(it, labelValue) },
         leadingIcon = {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_attribution_24),
+                imageVector = Icons.Default.Password,
                 contentDescription = ""
             )
         },
@@ -253,13 +264,36 @@ fun ClickableTexComponent(modifier: Modifier = Modifier, value: String) {
 }
 
 @Composable
+fun RedirectLoginText(modifier: Modifier = Modifier, value: String, onClick: (Int) -> Unit) {
+    val initialText = "Already Registered? Click"
+    val privacyPolicyText = " here "
+    val andText = "to Login"
+    val termsAndCondition = ""
+    val annotatedString = buildAnnotatedString {
+        append(initialText)
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+            pushStringAnnotation(tag = privacyPolicyText, annotation = privacyPolicyText)
+            append(privacyPolicyText)
+
+        }
+        append(andText)
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+            pushStringAnnotation(tag = termsAndCondition, annotation = termsAndCondition)
+            append(termsAndCondition)
+        }
+    }
+    ClickableText(text = annotatedString, onClick = onClick)
+
+}
+
+@Composable
 fun ButtonComponent(modifier: Modifier = Modifier, value: String, onRegister: () -> Unit) {
     Button(
         onClick = onRegister,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(48.dp)
-            .padding(top = 24.dp, start = 14.dp, end = 14.dp),
+            .padding(top = 12.dp, start = 14.dp, end = 14.dp),
 
         contentPadding = PaddingValues(),
         colors = ButtonDefaults.buttonColors(

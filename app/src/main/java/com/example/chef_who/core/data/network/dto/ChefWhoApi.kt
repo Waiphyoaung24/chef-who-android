@@ -4,6 +4,7 @@ import android.graphics.pdf.PdfDocument.Page
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
 import com.example.chef_who.core.domain.models.Order
+import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
 import com.example.chef_who.core.domain.models.Seller
 import com.example.chef_who.customer.domain.Dashboard
@@ -30,19 +31,23 @@ interface ChefWhoApi {
     @GET("getMenuList")
     suspend fun getMenuList(
         @Query("seller_id") sellerId: String?,
-        @Query("cat_id") catId: String?,
-        ): List<Food>
+        @Query("category_id") catId: String?,
+    ): List<Food>
 
     @GET("getUserCart")
     suspend fun getCartIdList(): List<Cart>
 
-    @GET("login")
-    suspend fun login(): Boolean
 
     @POST("register")
     suspend fun registerUser(
         @Query("first_name") firstname: String,
         @Query("last_name") lastname: String,
+        @Query("email") email: String,
+        @Query("password") password: String
+    ): ResponseObject
+
+    @POST("login")
+    suspend fun loginUser(
         @Query("email") email: String,
         @Query("password") password: String
     ): ResponseObject
@@ -57,9 +62,15 @@ interface ChefWhoApi {
     suspend fun getSellerList(): List<Seller>
 
     @GET("getOrderHistory")
-    suspend fun getOrderHistoryList(@Query("user_id")userId : String): List<OrderHistoryResponse>
+    suspend fun getOrderHistoryList(@Query("user_id") userId: String): List<OrderHistoryResponse>
 
     @GET("getActiveOrder")
-    suspend fun getActiveOrders(): List<Order>
+    suspend fun getActiveOrders(@Query("seller_id") sellerId: String): List<OrderActiveResponse>
+
+    @POST("updateOrderStatus")
+    suspend fun updateOrderStatus(
+        @Query("order_item_id") orderId: String,
+        @Query("order_status") orderStatus: String
+    ): ResponseObject
 
 }

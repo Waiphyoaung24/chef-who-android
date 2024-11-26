@@ -3,6 +3,7 @@ package com.example.chef_who.core.data.network.dto
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
 import com.example.chef_who.core.domain.models.Order
+import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
 import com.example.chef_who.core.domain.models.Seller
 import com.example.chef_who.core.domain.repository.MealsRepository
@@ -49,8 +50,12 @@ class MealsRepositoryImpl(
         return mealsApi.getOrderHistoryList(userId)
     }
 
-    override suspend fun getActiveOrders(sellerId: String): List<Order> {
-        return mealsApi.getActiveOrders()
+    override suspend fun getActiveOrders(sellerId: String): List<OrderActiveResponse> {
+        return mealsApi.getActiveOrders(sellerId)
+    }
+
+    override suspend fun updateOrderStatus(orderId: String,orderStatus :String): ResponseObject {
+        return mealsApi.updateOrderStatus(orderId,orderStatus)
     }
 
 

@@ -47,6 +47,7 @@ fun DetailsScreen(
     data: Food,
     navigateUp: () -> Unit,
     addToCart: () -> Unit,
+    isRegistered: Boolean,
 ) {
 
     LazyColumn(
@@ -135,10 +136,10 @@ fun DetailsScreen(
         item {
             Spacer(modifier = Modifier.height(14.dp))
             CommonButton(
+                modifier = Modifier.clickable(onClick = addToCart, enabled = isRegistered),
                 text = "Add to cart",
                 backgroundColor = MaterialTheme.colorScheme.primary,
                 foregroundColor = Color.White,
-                addToCart = addToCart
             )
             Spacer(modifier = Modifier.height(15.dp))
         }
@@ -175,7 +176,6 @@ fun CommonButton(
     foregroundColor: Color = MaterialTheme.colorScheme.primary,
     backgroundColor: Color = Color.White,
     modifier: Modifier = Modifier,
-    addToCart: () -> Unit
 ) {
 
     Card(
@@ -183,7 +183,6 @@ fun CommonButton(
             .fillMaxWidth()
             .padding(horizontal = 30.dp),
         shape = RoundedCornerShape(30.dp),
-        onClick = addToCart
     ) {
         Box(
             modifier = modifier

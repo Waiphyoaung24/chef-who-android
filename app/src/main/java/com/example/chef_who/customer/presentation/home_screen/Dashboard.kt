@@ -16,9 +16,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,7 +51,8 @@ fun ShowDashboard(
     navigateToMenuList: (String) -> Unit,
     onSearch: () -> Unit,
     onValueChanged: (String) -> Unit,
-    keyword: String
+    keyword: String,
+    onCatItemClick:(String)->Unit,
 
 ) {
     Column {
@@ -71,7 +74,8 @@ fun ShowDashboard(
                 when (item.viewType) {
                     "horizontalScroll" -> ShowHorizontalElements(
                         item = item,
-                        mCatIds = mCatIds
+                        mCatIds = mCatIds,
+                        onItemClick = onCatItemClick
                     )
                 }
 
@@ -91,7 +95,11 @@ fun ShowDashboard(
 }
 
 @Composable
-private fun ShowHorizontalElements(item: Dashboard.Item, mCatIds: List<Category>) {
+private fun ShowHorizontalElements(
+    item: Dashboard.Item,
+    mCatIds: List<Category>,
+    onItemClick: (String) -> Unit
+) {
     print(item)
     item.header?.let {
         ShowHeader(
@@ -111,7 +119,10 @@ private fun ShowHorizontalElements(item: Dashboard.Item, mCatIds: List<Category>
 
                 "categoryElement" -> ShowCategoryElement(
                     item = data,
-                    mCatIds = mCatIds[index].name
+                    mCatIds = mCatIds[index].name,
+                    onItemClick = ({
+                        onItemClick((index+1).toString())
+                    })
                 )
 
                 else -> {
@@ -212,4 +223,43 @@ fun TopBar(userName: String, value: String, navigateToCart: () -> Unit, cartItem
         }
     }
 
+}
+
+@Composable
+fun AuthRequiredScreen(
+    onSignInClick: () -> Unit,
+    onRegisterClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Sign In Required",
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Please sign in or register to continue.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Button(onClick = onSignInClick) {
+            Text("Sign In", style = MaterialTheme.typography.labelMedium)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedButton(onClick = onRegisterClick) {
+            Text("Register", style = MaterialTheme.typography.labelMedium)
+        }
+    }
 }

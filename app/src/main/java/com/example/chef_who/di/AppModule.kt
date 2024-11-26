@@ -14,11 +14,13 @@ import com.example.chef_who.core.domain.manager.LocalUserManager
 import com.example.chef_who.core.domain.repository.MealsRepository
 import com.example.chef_who.core.domain.repository.UserRepository
 import com.example.chef_who.core.domain.usecases.app_entry.AppEntryUseCases
+import com.example.chef_who.core.domain.usecases.app_entry.ClearCartItems
 import com.example.chef_who.core.domain.usecases.app_entry.GetCartItems
 import com.example.chef_who.core.domain.usecases.app_entry.ReadAppEntry
 import com.example.chef_who.core.domain.usecases.app_entry.SaveAppEntry
 import com.example.chef_who.core.domain.usecases.app_entry.SaveCartItem
 import com.example.chef_who.core.domain.usecases.auth.AuthUseCases
+import com.example.chef_who.core.domain.usecases.auth.GetCurrentUser
 import com.example.chef_who.core.domain.usecases.auth.LoginAuth
 import com.example.chef_who.core.domain.usecases.auth.RegisterAuth
 import com.example.chef_who.core.domain.usecases.meals.CreateOrder
@@ -35,12 +37,15 @@ import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
 import com.example.chef_who.core.domain.usecases.meals.SearchMeals
 import com.example.chef_who.core.domain.usecases.meals.SelectMeals
 import com.example.chef_who.core.domain.usecases.meals.SelectSingleMeal
+import com.example.chef_who.core.domain.usecases.meals.UpdateOrderStatus
 import com.example.chef_who.core.util.Constants
+import com.example.chef_who.core.util.UserPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.koin.androidx.compose.get
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -64,7 +69,9 @@ object AppModule {
         readAppEntry = ReadAppEntry(localUserManger),
         saveAppEntry = SaveAppEntry(localUserManger),
         saveCartItem = SaveCartItem(localUserManger),
-        getCartItems = GetCartItems(localUserManger)
+        getCartItems = GetCartItems(localUserManger),
+        userPreferences = UserPreferences(localUserManger),
+        clearCartItems = ClearCartItems(localUserManger)
     )
 
 
@@ -76,7 +83,8 @@ object AppModule {
         ): AuthUseCases {
         return AuthUseCases(
             loginAuth = LoginAuth(mUserRepository),
-            registerAuth = RegisterAuth(mUserRepository)
+            registerAuth = RegisterAuth(mUserRepository),
+            getCurrentUser = GetCurrentUser(mUserRepository)
 
         )
     }
@@ -97,10 +105,12 @@ object AppModule {
     fun provideMealsRepository(mealApi: ChefWhoApi): MealsRepository =
         MealsRepositoryImpl(mealApi)
 
+
+
     @Provides
     @Singleton
-    fun provideUsersRepository(mealApi: ChefWhoApi): UserRepository =
-        UsersRepositoryImpl(mealApi)
+    fun provideUsersRepository(mealApi: ChefWhoApi,userPreferences: UserPreferences): UserRepository =
+        UsersRepositoryImpl(mealApi,userPreferences)
 
     @Provides
     @Singleton
@@ -121,7 +131,8 @@ object AppModule {
             createOrder = CreateOrder(mealsRepository),
             getSellerList = GetSellerList(mealsRepository),
             getActiveOrders = GetActiveOrders(mealsRepository),
-            getOrderHistory = GetOrderHistory(mealsRepository)
+            getOrderHistory = GetOrderHistory(mealsRepository),
+            updateOrderStatus = UpdateOrderStatus(mealsRepository)
         )
     }
 

@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.chef_who.core.domain.models.Order
+import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
 import com.example.chef_who.ui.theme.Black
 
@@ -51,9 +52,12 @@ val NFTBackgroundColor = Brush.verticalGradient(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun UserDashBoardScreen(orderHistory: List<OrderHistoryResponse>) {
+fun UserDashBoardScreen(
+    orderHistory: List<OrderHistoryResponse>,
+    activeOrders: List<OrderActiveResponse>,
+    onSellerClick: (String,String)->Unit
+) {
 
-    val itemsList = listOf("Item 1", "Item 2")
     var selectedScreen by remember { mutableStateOf(0) }
 
 
@@ -68,13 +72,20 @@ fun UserDashBoardScreen(orderHistory: List<OrderHistoryResponse>) {
         when (selectedScreen) {
             0 -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(orderHistory.size) { item ->
-                    ListItemForDashBoard(isOrderHistory = true, modifier = Modifier,orderHistory.get(item))
+                    ListItemForDashBoard(
+                        modifier = Modifier,
+                        orderHistory[item]
+                    )
                 }
             }
 
             1 -> LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(orderHistory.size) { item ->
-                    ListItemForDashBoard(isOrderHistory = false, modifier = Modifier,orderHistory.get(item))
+                items(activeOrders.size) { item ->
+                    ListItemForActiveDashBoard(
+                        modifier = Modifier,
+                        activeOrderResponse = activeOrders[item],
+                        onSellerClick = onSellerClick
+                    )
                 }
             }
         }

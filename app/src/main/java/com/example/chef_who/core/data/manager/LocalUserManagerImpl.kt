@@ -12,6 +12,7 @@ import com.example.chef_who.core.data.manager.PreferenceKeys.CART_ITEMS_KEY
 import com.example.chef_who.core.domain.manager.LocalUserManager
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.util.Constants
+import com.example.chef_who.core.util.dataStore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,25 @@ class LocalUserManagerImpl(
         context.dataStore.edit { settings ->
             settings[PreferenceKeys.APP_ENTRY] = true
         }
+    }
+
+    override suspend fun clearCartItems() {
+        context.dataStore.edit { preferences ->
+            preferences.clear()// Remove the cart items key
+            preferences[PreferenceKeys.APP_ENTRY] = true // Restore app_entry
+
+        }
+
+    }
+
+    override suspend fun getAllData(): Map<String, Any?> {
+        val allData = mutableMapOf<String, Any?>()
+        context.dataStore.data.collect { preferences ->
+            preferences.asMap().forEach { (key, value) ->
+                allData[key.name] = value
+            }
+        }
+        return allData
     }
 
     override fun readAppEntry(): Flow<Boolean> {
@@ -47,6 +67,10 @@ class LocalUserManagerImpl(
             val cartJson = preferences[CART_ITEMS_KEY] ?: "[]"
             gson.fromJson(cartJson, object : TypeToken<List<Cart>>() {}.type)
         }
+    }
+
+    override fun getContext(): Context {
+        return context
     }
 
 }

@@ -31,6 +31,7 @@ import com.example.chef_who.R
 
 @Composable
 fun UserProfile(
+    onLogout:()->Unit,
     onBackBtnClick: () -> Unit
 ) {
     Column(
@@ -202,9 +203,7 @@ fun UserProfile(
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
-                .clickable {
-
-                }
+                .clickable(onClick = onLogout)
                 .padding(5.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically

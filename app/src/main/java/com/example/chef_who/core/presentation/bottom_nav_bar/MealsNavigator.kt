@@ -1,10 +1,13 @@
 package com.example.chef_who.core.presentation.bottom_nav_bar
 
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,11 +28,13 @@ import com.example.chef_who.R
 import com.example.chef_who.activities.MainViewModel
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.navigation.Route
+import com.example.chef_who.core.presentation.auth.SignInScreen
 import com.example.chef_who.core.presentation.auth.SignUpScreen
 import com.example.chef_who.customer.domain.Food
 import com.example.chef_who.customer.presentation.cart_screen.CartViewModel
 import com.example.chef_who.customer.presentation.cart_screen.CartScreen
 import com.example.chef_who.customer.presentation.detail_screen.DetailsScreen
+import com.example.chef_who.customer.presentation.home_screen.AuthRequiredScreen
 import com.example.chef_who.customer.presentation.home_screen.ShowDashboard
 import com.example.chef_who.customer.presentation.home_screen.DashBoardViewModel
 import com.example.chef_who.customer.presentation.home_screen.MenuListScreen
@@ -67,6 +72,7 @@ fun MealsNavigator() {
         Route.RegisterScreen.route -> 2
         else -> 0
     }
+
 
 
 
@@ -162,6 +168,13 @@ fun MealsNavigator() {
                         viewModel.fetchMenuListByCategory(viewModel.searchKeyword.value, "search")
                         navigateToMenuList(navController)
                     },
+                    onCatItemClick = {
+                        navigateToTab(
+                            navController = navController,
+                            route = Route.MenuListScreen.route,
+                        )
+                        viewModel.fetchMenuListByCategory(it.toString(), "category")
+                    },
                     navigateToCart = { navigateToTab(navController, Route.BookmarkScreen.route) }
                 )
             }
@@ -174,9 +187,13 @@ fun MealsNavigator() {
 
                 LaunchedEffect(
                     key1 = viewModel.sellerId.value,
-                    key2 = viewModel.searchKeyword.value
+                    key2 = viewModel.searchKeyword.value,
+                    key3 = viewModel.catId.value
                 ) {
                     if (viewModel.sellerId.value.isNotEmpty()) {
+                        viewModel.resetMenuLoadedStatus()
+                        viewModel.getMenuList()
+                    } else if (viewModel.catId.value.isNotEmpty()) {
                         viewModel.resetMenuLoadedStatus()
                         viewModel.getMenuList()
                     } else if (viewModel.searchKeyword.value.isNotEmpty()) {
@@ -201,16 +218,26 @@ fun MealsNavigator() {
             //Food Detail Screen Compose
             composable(route = Route.DetailsScreen.route) {
                 val viewModelCart: CartViewModel = hiltViewModel()
-                val context = LocalContext.current
+                val viewModelMain: MainViewModel = hiltViewModel()
+                val userId by viewModelMain.userPreferences.userIdFlow.collectAsState("")
+                var isRegistered = false
+                Log.d("", "current user is " + userId)
+                if (!userId.equals(null)) {
+                    isRegistered = true
+                }
                 navController.previousBackStackEntry?.savedStateHandle?.get<Food?>("food")
                     ?.let {
 
                         val data =
                             Cart(it.id, it.image, "in process", it.name, it.price.toDouble(), 1)
                         DetailsScreen(
+                            isRegistered = isRegistered,
                             data = it,
                             navigateUp = { navController.navigateUp() },
-                            addToCart = { viewModelCart.addToCart(data) },
+                            addToCart = {
+                                viewModelCart.addToCart(data)
+                                navController.navigateUp()
+                            },
 
                             )
                     }
@@ -221,14 +248,26 @@ fun MealsNavigator() {
 
             composable(route = Route.RegisterScreen.route) {
                 val viewModel: MainViewModel = hiltViewModel()
+                val user = viewModel.userPreferences
+                val userId by viewModel.userPreferences.userIdFlow.collectAsState("")
 
-                if (!viewModel.userRegistered.value) {
+                // case 1 -> user is registered just now and redirect to profile screen
+                if (viewModel.userRegistered.value) {
                     navigateToTab(navController, Route.ProfileScreen.route)
-                } else {
+
+                }
+                // case 2 -> user is logout and first time login in
+                else if (userId?.isEmpty() == true || userId == null) {
                     SignUpScreen(
                         onRegister = viewModel::createUser,
                         onTextChange = viewModel::onTextChange,
                         user = viewModel.user.value,
+                        navigateToLoginScreen = {
+                            navigateToTab(
+                                navController,
+                                Route.LoginScreen.route
+                            )
+                        },
                         navigateToHomeScreen = {
                             navigateToTab(
                                 navController,
@@ -237,19 +276,73 @@ fun MealsNavigator() {
                         }
                     )
                 }
+                //case 3 -> user is already login or registered state
+                else {
+                    UserProfile(onBackBtnClick = {}, onLogout = { viewModel.onLogout() })
+                }
 
             }
             //User Dashboard Screen Compose
             composable(route = Route.ProfileScreen.route) {
-                UserProfile(onBackBtnClick = {})
+                val viewModel: MainViewModel = hiltViewModel()
+
+                UserProfile(onBackBtnClick = {}, onLogout = { viewModel.onLogout() })
+            }
+
+            composable(route = Route.LoginScreen.route) {
+                val viewModel: MainViewModel = hiltViewModel()
+                val context = LocalContext.current
+                val toastMessage by viewModel.toastMessage.collectAsState()
+
+                LaunchedEffect(toastMessage) {
+                    toastMessage?.let {
+                        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                        viewModel.clearToast() // Clear the toast message after showing
+                    }
+                }
+                if (!viewModel.userRegistered.value) {
+                    SignInScreen(
+                        modifier = Modifier,
+                        onTextChange = viewModel::onTextChange,
+                        viewModel.user.value,
+                        onLogin = viewModel::loginUser,
+                        navigateUp = { navController.navigateUp() }
+                    )
+                } else {
+                    UserProfile(onBackBtnClick = {}, onLogout = { viewModel.onLogout() })
+                }
             }
 
             //User Dashboard Screen Compose
             composable(route = Route.UserDashBoardScreen.route) {
                 val viewModel: CustomerDashboardViewModel = hiltViewModel()
-                val data = viewModel.mHistoryList
-                viewModel.refreshData()
-                UserDashBoardScreen(data.value)
+                val dataHistory = viewModel.mHistoryList
+                val dataActive = viewModel.mActiveList
+                val userId by viewModel.userPreferences.userIdFlow.collectAsState("")
+
+                if (!userId.equals(null)) {
+                    viewModel.refreshData()
+                    UserDashBoardScreen(
+                        dataHistory.value,
+                        dataActive.value,
+                        onSellerClick = { orderStatus, orderId ->
+                            viewModel.updateOrderStatus(orderId, orderStatus)
+                        })
+
+
+                } else {
+                    AuthRequiredScreen(onRegisterClick = {
+                        navigateToTab(
+                            navController,
+                            Route.RegisterScreen.route
+                        )
+                    }, onSignInClick = {
+                        navigateToTab(
+                            navController,
+                            Route.LoginScreen.route
+                        )
+                    })
+                }
             }
 
             //Cart (Before checkout) Screen Compose
@@ -258,8 +351,10 @@ fun MealsNavigator() {
                 CartScreen(
                     carts = viewModel.cartItems.value,
                     navigateToDetails = {},
+                    removeCart = { itemId -> viewModel.removeFromCart(itemId) },
                     navigateUp = { navController.navigateUp() },
-                    createOrder = { viewModel.createOrder() }
+                    createOrder = {
+                        viewModel.createOrder() }
                 )
             }
 

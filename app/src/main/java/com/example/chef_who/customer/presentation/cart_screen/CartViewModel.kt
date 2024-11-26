@@ -60,6 +60,18 @@ class CartViewModel @Inject constructor(
             _cartItems.value = currentCart
         }
     }
+    fun removeFromCart(itemId: Int) {
+        viewModelScope.launch {
+            val currentCart = _cartItems.value.toMutableList()
+            val existingItem = currentCart.find { it.menu_item_id == itemId }
+            if (existingItem != null) {
+                currentCart.remove(existingItem)
+                mAppEntryUseCases.saveCartItem.invoke(currentCart)
+                _cartItems.value = currentCart
+            }
+        }
+    }
+
 
     fun createOrder() {
         viewModelScope.launch {

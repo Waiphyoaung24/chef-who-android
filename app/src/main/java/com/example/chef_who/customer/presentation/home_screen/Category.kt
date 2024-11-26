@@ -1,6 +1,7 @@
 package com.example.chef_who.customer.presentation.home_screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -8,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.chef_who.core.domain.models.Category
@@ -16,10 +18,10 @@ import com.example.chef_who.customer.presentation.update.components.LoadImage
 
 
 @Composable
-fun ShowCategoryElement(item: Dashboard.Item.SubItem,mCatIds : String) {
+fun ShowCategoryElement(onItemClick:()->Unit,item: Dashboard.Item.SubItem, mCatIds: String) {
     Column {
         Spacer(modifier = Modifier.height(5.dp)) // added to support space for header
-        CategoryImage(item = item)
+        CategoryImage(item = item,onItemClick)
         Spacer(modifier = Modifier.height(5.dp))
         CategoryInfo(
             title = mCatIds,
@@ -29,7 +31,7 @@ fun ShowCategoryElement(item: Dashboard.Item.SubItem,mCatIds : String) {
 }
 
 @Composable
-private fun CategoryImage(item: Dashboard.Item.SubItem) {
+private fun CategoryImage(item: Dashboard.Item.SubItem,onItemClick: () -> Unit) {
     val bgColor = item.meta?.bgColor?.let { color ->
         getColor(color)
     } ?: Color.Blue
@@ -37,6 +39,7 @@ private fun CategoryImage(item: Dashboard.Item.SubItem) {
     Box(
         modifier = Modifier
             .size(70.dp)
+            .clickable(onClick = onItemClick)
             .background(bgColor, shape = RoundedCornerShape(5.dp)),
         contentAlignment = Alignment.Center
     ) {

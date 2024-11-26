@@ -45,6 +45,7 @@ fun CartScreen(
     carts: List<Cart>,
     navigateUp: () -> Unit,
     createOrder: () -> Unit,
+    removeCart: (Int) -> Unit,
     navigateToDetails: (String) -> Unit,
 
     ) {
@@ -67,6 +68,7 @@ fun CartScreen(
             )
         }
         if (carts.isEmpty()) {
+            Spacer(modifier = Modifier.weight(1f))
             BasicText(
                 text = "Your Cart is Empty",
                 modifier = Modifier.weight(1f),
@@ -75,11 +77,12 @@ fun CartScreen(
 
 
         } else {
-            LazyColumn(Modifier.defaultMinSize(420.dp)) {
+            LazyColumn(Modifier.defaultMinSize(420.dp).padding(8.dp)) {
                 itemsIndexed(carts) { i, item ->
-                    CartItem(modifier = Modifier,item)
+                    CartItem(modifier = Modifier, item, removeCart = { removeCart(item.menu_item_id) })
                 }
             }
+            Spacer(modifier=Modifier.weight(1f))
 
             Column(
                 modifier = Modifier
@@ -128,7 +131,7 @@ fun CartScreen(
 }
 
 @Composable
-fun CartItem(modifier: Modifier = Modifier,item : Cart) {
+fun CartItem(modifier: Modifier = Modifier, item: Cart, removeCart: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -195,7 +198,7 @@ fun CartItem(modifier: Modifier = Modifier,item : Cart) {
                     modifier = Modifier
                         .offset(x = 8.dp, y = 4.dp)
                         .clip(RoundedCornerShape(4.dp))
-                        .clickable { /* TODO */ }
+                        .clickable(onClick = removeCart)
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }

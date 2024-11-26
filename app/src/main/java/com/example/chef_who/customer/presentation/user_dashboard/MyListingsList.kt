@@ -2,6 +2,7 @@ package com.example.chef_who.customer.presentation.user_dashboard
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,14 +28,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.chef_who.R
+import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
 
 
 @Composable
 fun ListItemForDashBoard(
-    isOrderHistory: Boolean,
     modifier: Modifier = Modifier,
-    orderHistory: OrderHistoryResponse
+    orderHistory: OrderHistoryResponse,
+
+    ) {
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp, start = 20.dp, end = 20.dp)
+            .background(Color.White, RoundedCornerShape(20.dp))
+            .padding(16.dp)
+    ) {
+        OrderHistoryItem(modifier = Modifier, orderHistory)
+    }
+}
+
+@Composable
+fun ListItemForActiveDashBoard(
+    modifier: Modifier = Modifier,
+    activeOrderResponse: OrderActiveResponse,
+    onSellerClick: (String,String) -> Unit,
 ) {
 
     Column(
@@ -44,11 +64,7 @@ fun ListItemForDashBoard(
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(16.dp)
     ) {
-        if (isOrderHistory) {
-            OrderHistoryItem(modifier = Modifier, orderHistory)
-        } else {
-            ActiveOrderItem()
-        }
+        ActiveOrderItem(modifier = Modifier, activeOrderResponse, onSellerClick)
     }
 }
 
@@ -91,7 +107,11 @@ fun OrderHistoryItem(modifier: Modifier = Modifier, data: OrderHistoryResponse) 
 }
 
 @Composable
-fun ActiveOrderItem(modifier: Modifier = Modifier) {
+fun ActiveOrderItem(
+    modifier: Modifier = Modifier,
+    data: OrderActiveResponse,
+    onSellerClick: (String,String) -> Unit
+) {
     val VoiletColor = Color(0XFF577CFF)
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -103,12 +123,12 @@ fun ActiveOrderItem(modifier: Modifier = Modifier) {
 
         Column(modifier = Modifier.weight(0.5f)) {
             Text(
-                text = "Wai Phyo Aung",
+                text = data.customer_name,
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
             )
 
             Text(
-                text = "Little Cheese Burger",
+                text = data.menu_item_name,
                 style = MaterialTheme.typography.labelMedium
 
             )
@@ -118,6 +138,7 @@ fun ActiveOrderItem(modifier: Modifier = Modifier) {
             tint = Color.White,
             modifier = Modifier
                 .size(22.dp)
+                .clickable(onClick = { onSellerClick.invoke("Accepted",data.order_item_id) })
                 .drawBehind {
                     drawCircle(
                         color = VoiletColor,
@@ -130,6 +151,7 @@ fun ActiveOrderItem(modifier: Modifier = Modifier) {
             tint = Color.White,
             modifier = Modifier
                 .size(22.dp)
+                .clickable(onClick = { onSellerClick.invoke("Declined",data.order_item_id) })
                 .drawBehind {
                     drawCircle(
                         color = Color.Red,
@@ -143,7 +165,7 @@ fun ActiveOrderItem(modifier: Modifier = Modifier) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Row(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Quantity : 2",
+                text = "Quantity : ${data.quantity}",
                 style = MaterialTheme.typography.labelMedium.copy(
                     color = Color.Gray,
                 ),

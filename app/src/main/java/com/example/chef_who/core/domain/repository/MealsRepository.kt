@@ -4,8 +4,10 @@ import com.example.chef_who.core.data.network.dto.ResponseObject
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
 import com.example.chef_who.core.domain.models.Order
+import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
 import com.example.chef_who.core.domain.models.Seller
+import com.example.chef_who.core.domain.usecases.meals.UpdateOrderStatus
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.domain.Food
 
@@ -19,7 +21,8 @@ interface MealsRepository {
     suspend fun getCartList():List<Cart>
     suspend fun getSellerList():List<Seller>
     suspend fun getOrderHistoryList(userId : String):List<OrderHistoryResponse>
-    suspend fun getActiveOrders(sellerId: String):List<Order>
+    suspend fun getActiveOrders(sellerId: String):List<OrderActiveResponse>
+    suspend fun updateOrderStatus(orderId : String,orderStatus: String) : ResponseObject
 
 
 }
