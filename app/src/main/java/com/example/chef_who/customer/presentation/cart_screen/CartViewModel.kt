@@ -36,13 +36,14 @@ class CartViewModel @Inject constructor(
 ) : ViewModel() {
     private val _cartItems = mutableStateOf<List<Cart>>(emptyList())
     val cartItems: State<List<Cart>> = _cartItems
-
+    val userId : String=""
     init {
         // Load cart items from DataStore
         viewModelScope.launch {
             mAppEntryUseCases.getCartItems().collectLatest { items ->
                 _cartItems.value = items
             }
+            mAppEntryUseCases.userPreferences.userIdFlow.collect({userId})
         }
     }
 
@@ -73,9 +74,9 @@ class CartViewModel @Inject constructor(
     }
 
 
-    fun createOrder() {
+    fun createOrder(userId : String) {
         viewModelScope.launch {
-            val order = Order("1", cartItems.value)
+            val order = Order(userId, cartItems.value)
             val data = mealsUseCases.createOrder.invoke(order)
             if (data.message=="success") {
                 //send user to order detail screen

@@ -23,6 +23,7 @@ import com.example.chef_who.core.domain.usecases.auth.AuthUseCases
 import com.example.chef_who.core.domain.usecases.auth.GetCurrentUser
 import com.example.chef_who.core.domain.usecases.auth.LoginAuth
 import com.example.chef_who.core.domain.usecases.auth.RegisterAuth
+import com.example.chef_who.core.domain.usecases.auth.SetUpSellerProfile
 import com.example.chef_who.core.domain.usecases.meals.CreateOrder
 import com.example.chef_who.core.domain.usecases.meals.DeleteMeals
 import com.example.chef_who.core.domain.usecases.meals.GetActiveOrders
@@ -84,7 +85,8 @@ object AppModule {
         return AuthUseCases(
             loginAuth = LoginAuth(mUserRepository),
             registerAuth = RegisterAuth(mUserRepository),
-            getCurrentUser = GetCurrentUser(mUserRepository)
+            getCurrentUser = GetCurrentUser(mUserRepository),
+            setupSellerProfile = SetUpSellerProfile(mUserRepository)
 
         )
     }

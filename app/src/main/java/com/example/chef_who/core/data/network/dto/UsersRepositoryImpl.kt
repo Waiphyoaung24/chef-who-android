@@ -1,6 +1,7 @@
 package com.example.chef_who.core.data.network.dto
 
 import android.util.Log
+import com.example.chef_who.core.domain.models.SellerProfileResponse
 import com.example.chef_who.core.domain.models.User
 import com.example.chef_who.core.domain.repository.UserRepository
 import com.example.chef_who.core.util.UserPreferences
@@ -22,16 +23,7 @@ class UsersRepositoryImpl(
 
 
     override suspend fun register(user: User): ResponseObject {
-        val response =
-            mealsApi.registerUser(user.first_name, user.last_name, user.email, user.password)
-
-        if (response.message == "success") {
-            userPreferences.saveUser(
-                user.id,
-                userName = user.first_name + " " + user.last_name
-            )
-        }
-        return response
+       return mealsApi.registerUser(user.first_name, user.last_name, user.email, user.password)
     }
 
     override suspend fun getUserObj(): Flow<User?> {
@@ -53,6 +45,10 @@ class UsersRepositoryImpl(
                 null // Return null if user data is incomplete
             }
         }
+    }
+
+    override suspend fun setupSellerProfile(sellerProfileResponse: SellerProfileResponse): ResponseObject {
+        return mealsApi.setupSellerProfile(sellerProfileResponse)
     }
 
 }

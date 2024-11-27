@@ -38,6 +38,7 @@ import com.example.chef_who.customer.presentation.home_screen.AuthRequiredScreen
 import com.example.chef_who.customer.presentation.home_screen.ShowDashboard
 import com.example.chef_who.customer.presentation.home_screen.DashBoardViewModel
 import com.example.chef_who.customer.presentation.home_screen.MenuListScreen
+import com.example.chef_who.customer.presentation.update.components.ShowLoading
 import com.example.chef_who.customer.presentation.user_dashboard.CustomerDashboardViewModel
 import com.example.chef_who.customer.presentation.user_dashboard.UserDashBoardScreen
 import com.example.chef_who.customer.presentation.user_profile.UserProfile
@@ -150,33 +151,50 @@ fun MealsNavigator() {
             composable(route = Route.HomeScreen.route) { backStackEntry ->
                 val viewModel: DashBoardViewModel = hiltViewModel()
                 val viewModelCart: CartViewModel = hiltViewModel()
-                ShowDashboard(
-                    viewModel.mData.value,
-                    viewModel.mSellerList.value,
-                    viewModel.mCategoryIds.value,
-                    viewModelCart.cartItems.value.size,
-                    navigateToMenuList = { it ->
-                        navigateToTab(
-                            navController = navController,
-                            route = Route.MenuListScreen.route,
-                        )
-                        viewModel.fetchMenuListByCategory(it, "seller")
-                    },
-                    keyword = viewModel.searchKeyword.value,
-                    onValueChanged = { newValue -> viewModel.searchKeyword.value = newValue },
-                    onSearch = {
-                        viewModel.fetchMenuListByCategory(viewModel.searchKeyword.value, "search")
-                        navigateToMenuList(navController)
-                    },
-                    onCatItemClick = {
-                        navigateToTab(
-                            navController = navController,
-                            route = Route.MenuListScreen.route,
-                        )
-                        viewModel.fetchMenuListByCategory(it.toString(), "category")
-                    },
-                    navigateToCart = { navigateToTab(navController, Route.BookmarkScreen.route) }
-                )
+                val viewModelMain: MainViewModel = hiltViewModel()
+                val username by viewModelMain.userPreferences.userNameFlow.collectAsState("")
+                val isLoading by viewModel.isLoading.collectAsState()
+                viewModel.refreshData()
+                if (isLoading) {
+                    ShowLoading()
+                } else {
+                    ShowDashboard(
+                        viewModel.mData.value,
+                        viewModel.mSellerList.value,
+                        viewModel.mCategoryIds.value,
+                        viewModelCart.cartItems.value.size,
+                        navigateToMenuList = { it ->
+                            navigateToTab(
+                                navController = navController,
+                                route = Route.MenuListScreen.route,
+                            )
+                            viewModel.fetchMenuListByCategory(it, "seller")
+                        },
+                        keyword = viewModel.searchKeyword.value,
+                        onValueChanged = { newValue -> viewModel.searchKeyword.value = newValue },
+                        onSearch = {
+                            viewModel.fetchMenuListByCategory(
+                                viewModel.searchKeyword.value,
+                                "search"
+                            )
+                            navigateToMenuList(navController)
+                        },
+                        onCatItemClick = {
+                            navigateToTab(
+                                navController = navController,
+                                route = Route.MenuListScreen.route,
+                            )
+                            viewModel.fetchMenuListByCategory(it.toString(), "category")
+                        },
+                        userName = username.toString(),
+                        navigateToCart = {
+                            navigateToTab(
+                                navController,
+                                Route.BookmarkScreen.route
+                            )
+                        }
+                    )
+                }
             }
 
             //Menu List Screen Compose
@@ -278,7 +296,13 @@ fun MealsNavigator() {
                 }
                 //case 3 -> user is already login or registered state
                 else {
-                    UserProfile(onBackBtnClick = {}, onLogout = { viewModel.onLogout() })
+                    UserProfile(
+                        onBackBtnClick = {},
+                        onClickSeller = viewModel::setUpSellerProfile,
+                        onLogout = {
+                            navigateToTab(navController, Route.HomeScreen.route)
+                            viewModel.onLogout()
+                        })
                 }
 
             }
@@ -286,7 +310,13 @@ fun MealsNavigator() {
             composable(route = Route.ProfileScreen.route) {
                 val viewModel: MainViewModel = hiltViewModel()
 
-                UserProfile(onBackBtnClick = {}, onLogout = { viewModel.onLogout() })
+                UserProfile(
+                    onBackBtnClick = {},
+                    onClickSeller = viewModel::setUpSellerProfile,
+                    onLogout = {
+                        viewModel.onLogout()
+                        navigateToTab(navController, Route.HomeScreen.route)
+                    })
             }
 
             composable(route = Route.LoginScreen.route) {
@@ -309,19 +339,26 @@ fun MealsNavigator() {
                         navigateUp = { navController.navigateUp() }
                     )
                 } else {
-                    UserProfile(onBackBtnClick = {}, onLogout = { viewModel.onLogout() })
+                    UserProfile(onBackBtnClick = {},
+                        onClickSeller = viewModel::setUpSellerProfile,
+                        onLogout = {
+                        navigateToTab(navController, Route.HomeScreen.route)
+                        viewModel.onLogout()
+                    })
                 }
             }
 
             //User Dashboard Screen Compose
             composable(route = Route.UserDashBoardScreen.route) {
                 val viewModel: CustomerDashboardViewModel = hiltViewModel()
+                val viewModelMain: MainViewModel = hiltViewModel()
+
                 val dataHistory = viewModel.mHistoryList
                 val dataActive = viewModel.mActiveList
-                val userId by viewModel.userPreferences.userIdFlow.collectAsState("")
+                val userId by viewModelMain.userPreferences.userIdFlow.collectAsState("")
 
                 if (!userId.equals(null)) {
-                    viewModel.refreshData()
+                    viewModel.refreshData(userId.toString())
                     UserDashBoardScreen(
                         dataHistory.value,
                         dataActive.value,
@@ -347,14 +384,18 @@ fun MealsNavigator() {
 
             //Cart (Before checkout) Screen Compose
             composable(route = Route.BookmarkScreen.route) {
+                val viewModelMain : MainViewModel = hiltViewModel()
                 val viewModel: CartViewModel = hiltViewModel()
+                val userId by viewModelMain.userPreferences.userIdFlow.collectAsState("")
+
                 CartScreen(
                     carts = viewModel.cartItems.value,
                     navigateToDetails = {},
                     removeCart = { itemId -> viewModel.removeFromCart(itemId) },
                     navigateUp = { navController.navigateUp() },
                     createOrder = {
-                        viewModel.createOrder() }
+                        viewModel.createOrder(userId.toString())
+                    }
                 )
             }
 

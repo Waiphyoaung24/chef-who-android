@@ -7,6 +7,8 @@ import com.example.chef_who.core.domain.models.Order
 import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
 import com.example.chef_who.core.domain.models.Seller
+import com.example.chef_who.core.domain.models.SellerProfileResponse
+import com.example.chef_who.core.domain.models.User
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.domain.Food
 import retrofit2.http.Body
@@ -54,6 +56,9 @@ interface ChefWhoApi {
 
     @POST("createOrder")
     suspend fun createOrder(@Body order: Order): ResponseObject
+
+    @POST("create-seller")
+    suspend fun setupSellerProfile(@Body sellerProfile: SellerProfileResponse): ResponseObject
 
     @GET("search")
     suspend fun search(@Query("keyword") keyword: String): List<Food>

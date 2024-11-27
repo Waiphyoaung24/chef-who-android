@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.chef_who.core.data.manager.PreferenceKeys.APP_ENTRY
 import com.example.chef_who.core.data.manager.PreferenceKeys.CART_ITEMS_KEY
 import com.example.chef_who.core.domain.manager.LocalUserManager
 import com.example.chef_who.core.domain.models.Cart
@@ -31,11 +32,6 @@ class LocalUserManagerImpl(
     }
 
     override suspend fun clearCartItems() {
-        context.dataStore.edit { preferences ->
-            preferences.clear()// Remove the cart items key
-            preferences[PreferenceKeys.APP_ENTRY] = true // Restore app_entry
-
-        }
 
     }
 

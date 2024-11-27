@@ -14,7 +14,9 @@ import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
 import com.example.chef_who.customer.domain.Dashboard
 import com.example.chef_who.customer.domain.Food
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,6 +36,9 @@ class DashBoardViewModel @Inject constructor(
 
     var isMenuLoaded = mutableStateOf(false)
         private set
+
+    private val _isLoading = MutableStateFlow(true) // Initial loading state
+    val isLoading: StateFlow<Boolean> get() = _isLoading
 
 
     var searchKeyword = mutableStateOf("")
@@ -88,7 +93,7 @@ class DashBoardViewModel @Inject constructor(
                     addMenuItem(mealsUseCases.getMenuList.invoke(sellerId.value, catId.value))
                     isMenuLoaded.value = true
                     sellerId.value = ""
-                    catId.value=""
+                    catId.value = ""
                 } catch (e: Exception) {
                     Log.d("error", e.message.toString())
                 }
@@ -118,6 +123,10 @@ class DashBoardViewModel @Inject constructor(
         isMenuLoaded.value = false
     }
 
+    fun refreshData() {
+        getSellerList()
+    }
+
     private fun addMenuItem(item: List<Food>) {
         // Update the state to create a new reference, triggering recomposition
         menuList.value = item.toMutableList()
@@ -128,13 +137,15 @@ class DashBoardViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 mData.value = mealsUseCases.mHomeType.invoke().data
-
             } catch (e: Exception) {
                 Log.d("Error", e.message.toString())
             }
+            delay(500)
+            _isLoading.value = false
         }
-    }
 
+
+    }
 
 }
 

@@ -31,8 +31,9 @@ import com.example.chef_who.R
 
 @Composable
 fun UserProfile(
-    onLogout:()->Unit,
-    onBackBtnClick: () -> Unit
+    onLogout: () -> Unit,
+    onBackBtnClick: () -> Unit,
+    onClickSeller: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,7 +86,11 @@ fun UserProfile(
                 contentDescription = null,
                 modifier = Modifier.weight(0.05f), tint = MaterialTheme.colorScheme.primary
             )
-            Text("Profile Picture", style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(0.2f))
+            Text(
+                "Profile Picture",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(0.2f)
+            )
             Icon(
                 painter = painterResource(id = R.drawable.arrow_right),
                 contentDescription = null,
@@ -105,9 +110,7 @@ fun UserProfile(
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
                 .border(1.dp, Color.LightGray, shape = RoundedCornerShape(10.dp))
                 .clip(RoundedCornerShape(10.dp))
-                .clickable {
-
-                }
+                .clickable(onClick = onClickSeller)
                 .padding(5.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -117,7 +120,11 @@ fun UserProfile(
                 contentDescription = null,
                 modifier = Modifier.weight(0.05f), tint = MaterialTheme.colorScheme.primary
             )
-            Text("Notification", style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(0.2f))
+            Text(
+                "To become A seller",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(0.2f)
+            )
             Icon(
                 painter = painterResource(id = R.drawable.arrow_right),
                 contentDescription = null,
@@ -150,7 +157,11 @@ fun UserProfile(
                 contentDescription = null,
                 modifier = Modifier.weight(0.05f), tint = MaterialTheme.colorScheme.primary
             )
-            Text("Settings", style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(0.2f))
+            Text(
+                "Settings",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(0.2f)
+            )
             Icon(
                 painter = painterResource(id = R.drawable.arrow_right),
                 contentDescription = null,
@@ -183,7 +194,11 @@ fun UserProfile(
                 contentDescription = null,
                 modifier = Modifier.weight(0.05f), tint = MaterialTheme.colorScheme.primary
             )
-            Text("Help Center", style = MaterialTheme.typography.labelMedium,modifier = Modifier.weight(0.2f))
+            Text(
+                "Help Center",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(0.2f)
+            )
             Icon(
                 painter = painterResource(id = R.drawable.arrow_right),
                 contentDescription = null,
@@ -213,7 +228,11 @@ fun UserProfile(
                 contentDescription = null,
                 modifier = Modifier.weight(0.05f), tint = MaterialTheme.colorScheme.primary
             )
-            Text("Logout", style = MaterialTheme.typography.labelMedium,modifier = Modifier.weight(0.2f))
+            Text(
+                "Logout",
+                style = MaterialTheme.typography.labelMedium,
+                modifier = Modifier.weight(0.2f)
+            )
             Icon(
                 painter = painterResource(id = R.drawable.arrow_right),
                 contentDescription = null,

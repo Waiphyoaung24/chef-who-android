@@ -16,6 +16,7 @@ import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -30,20 +31,13 @@ class CustomerDashboardViewModel @Inject constructor(
     val userPreferences = appEntryUseCases.userPreferences
 
 
-    init {
-        fetchAllOrderHistory()
-        fetchAllActiveOrders()
-    }
 
-
-    private fun fetchAllOrderHistory() {
-        val userId = userPreferences.userIdFlow
+    private fun fetchAllOrderHistory(userId : String) {
         viewModelScope.launch {
 
             try {
                 mHistoryList.value =
-                    mealsUseCases.getOrderHistory.invoke(userId.toString())
-                Log.d("test", "user id is " + userId.toString())
+                    mealsUseCases.getOrderHistory.invoke(userId)
             } catch (e: Exception) {
                 Log.d("Error", e.toString())
             }
@@ -52,10 +46,10 @@ class CustomerDashboardViewModel @Inject constructor(
     }
 
 
-    private fun fetchAllActiveOrders() {
+    private fun fetchAllActiveOrders(userId :String) {
         viewModelScope.launch {
             try {
-                mActiveList.value = mealsUseCases.getActiveOrders.invoke("2")
+                mActiveList.value = mealsUseCases.getActiveOrders.invoke(userId)
             } catch (e: Exception) {
                 Log.d("Error", e.toString())
 
@@ -78,9 +72,9 @@ class CustomerDashboardViewModel @Inject constructor(
         }
     }
 
-    fun refreshData() {
-        fetchAllOrderHistory()
-        fetchAllActiveOrders()
+    fun refreshData(userId: String) {
+        fetchAllOrderHistory(userId)
+        fetchAllActiveOrders(userId)
     }
 
 }

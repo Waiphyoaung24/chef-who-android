@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.chef_who.R
 import com.example.chef_who.core.domain.models.Category
 import com.example.chef_who.core.domain.models.Seller
@@ -53,11 +54,12 @@ fun ShowDashboard(
     onValueChanged: (String) -> Unit,
     keyword: String,
     onCatItemClick:(String)->Unit,
+    userName: String,
 
 ) {
     Column {
         Spacer(Modifier.height(16.dp))
-        TopBar("Wai Phyo Aung", "Hi", navigateToCart = navigateToCart, mCartItems)
+        TopBar(userName, navigateToCart = navigateToCart, mCartItems)
         SearchBar(
             text = keyword,
             onValueChange = onValueChanged,
@@ -160,7 +162,7 @@ private fun ShowVerticalElements(
 }
 
 @Composable
-fun TopBar(userName: String, value: String, navigateToCart: () -> Unit, cartItems: Int) {
+fun TopBar(userName: String, navigateToCart: () -> Unit, cartItems: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,48 +170,12 @@ fun TopBar(userName: String, value: String, navigateToCart: () -> Unit, cartItem
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (value.isNotEmpty()) {
             Text(
-                text = "Hello $userName!",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "Chef-Who",
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
                 color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.Bold
             )
-
-        } else {
-            val login = "Login"
-            val andText = " / "
-            val termsAndCondition = "Register"
-            val annotatedString = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    pushStringAnnotation(tag = login, annotation = login)
-                    append(login)
-
-                }
-                append(andText)
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
-                    pushStringAnnotation(tag = termsAndCondition, annotation = termsAndCondition)
-                    append(termsAndCondition)
-                }
-            }
-            Text(
-                text = annotatedString,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-
-            )
-        }
 
         BadgedBox(badge = { Badge { Text(cartItems.toString()) } }) {
 
@@ -239,7 +205,7 @@ fun AuthRequiredScreen(
     ) {
         Text(
             text = "Sign In Required",
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold
         )
 

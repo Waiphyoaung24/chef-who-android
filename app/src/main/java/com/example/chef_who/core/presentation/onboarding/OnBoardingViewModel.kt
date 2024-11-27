@@ -26,5 +26,6 @@ class OnBoardingViewModel @Inject constructor(
             appEntryUseCases.saveAppEntry.invoke()
 
         }
+
     }
 }

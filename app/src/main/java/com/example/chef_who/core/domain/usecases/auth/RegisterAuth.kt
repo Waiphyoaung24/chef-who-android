@@ -9,14 +9,7 @@ class RegisterAuth(
     private val mUserRepository: UserRepository,
 
 ) {
-    var isUserRegister : Boolean = false
-    suspend fun createUser(user: User): Boolean {
-        if(mUserRepository.register(user).message == "success"){
-            isUserRegister = true
-        }
-        return isUserRegister
+    suspend fun createUser(user: User): ResponseObject {
+        return mUserRepository.register(user)
     }
-
-
-
 }

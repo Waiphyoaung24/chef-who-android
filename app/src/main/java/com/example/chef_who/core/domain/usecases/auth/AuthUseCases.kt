@@ -6,5 +6,6 @@ import com.example.chef_who.core.domain.usecases.app_entry.SaveAppEntry
 data class AuthUseCases(
     val loginAuth: LoginAuth,
     val registerAuth : RegisterAuth,
-    val getCurrentUser : GetCurrentUser
+    val getCurrentUser : GetCurrentUser,
+    val setupSellerProfile : SetUpSellerProfile
 )
