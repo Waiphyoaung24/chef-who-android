@@ -54,12 +54,12 @@ fun ShowDashboard(
     onValueChanged: (String) -> Unit,
     keyword: String,
     onCatItemClick:(String)->Unit,
-    userName: String,
 
 ) {
+
     Column {
         Spacer(Modifier.height(16.dp))
-        TopBar(userName, navigateToCart = navigateToCart, mCartItems)
+        TopBar(navigateToCart = navigateToCart, mCartItems)
         SearchBar(
             text = keyword,
             onValueChange = onValueChanged,
@@ -162,7 +162,7 @@ private fun ShowVerticalElements(
 }
 
 @Composable
-fun TopBar(userName: String, navigateToCart: () -> Unit, cartItems: Int) {
+fun TopBar (navigateToCart: () -> Unit, cartItems: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

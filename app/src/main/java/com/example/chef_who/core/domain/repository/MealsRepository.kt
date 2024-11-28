@@ -3,6 +3,7 @@ package com.example.chef_who.core.domain.repository
 import com.example.chef_who.core.data.network.dto.ResponseObject
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
+import com.example.chef_who.core.domain.models.FoodMenu
 import com.example.chef_who.core.domain.models.Order
 import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
@@ -23,6 +24,8 @@ interface MealsRepository {
     suspend fun getOrderHistoryList(userId : String):List<OrderHistoryResponse>
     suspend fun getActiveOrders(sellerId: String):List<OrderActiveResponse>
     suspend fun updateOrderStatus(orderId : String,orderStatus: String) : ResponseObject
+    suspend fun addMenuItemToCloud(sellerId: String,food: FoodMenu) : ResponseObject
+
 
 
 }

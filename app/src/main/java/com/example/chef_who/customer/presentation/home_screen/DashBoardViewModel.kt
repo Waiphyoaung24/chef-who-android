@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.chef_who.core.domain.models.Category
+import com.example.chef_who.core.domain.models.FoodMenu
 import com.example.chef_who.core.domain.models.Seller
+import com.example.chef_who.core.domain.models.User
 import com.example.chef_who.core.domain.usecases.app_entry.AppEntryUseCases
 import com.example.chef_who.core.domain.usecases.meals.MealsUseCases
 import com.example.chef_who.customer.domain.Dashboard
@@ -29,6 +31,7 @@ class DashBoardViewModel @Inject constructor(
     val mData: MutableState<List<Dashboard.Item>> = mutableStateOf(emptyList())
     val mCategoryIds: MutableState<List<Category>> = mutableStateOf(emptyList())
     val mSellerList: MutableState<List<Seller>> = mutableStateOf(emptyList())
+    val food = mutableStateOf(FoodMenu(0, "", 0, "", "", ""))
 
 
     var menuList = mutableStateOf(mutableListOf<Food>())
@@ -37,8 +40,7 @@ class DashBoardViewModel @Inject constructor(
     var isMenuLoaded = mutableStateOf(false)
         private set
 
-    private val _isLoading = MutableStateFlow(true) // Initial loading state
-    val isLoading: StateFlow<Boolean> get() = _isLoading
+    val isLoading = mutableStateOf(false) // Track loading state
 
 
     var searchKeyword = mutableStateOf("")
@@ -47,6 +49,8 @@ class DashBoardViewModel @Inject constructor(
         private set
     var sellerId = mutableStateOf("")
         private set
+
+    var toastMessage = mutableStateOf<String?>(null)
 
 
     fun fetchMenuListByCategory(newString: String, type: String) {
@@ -127,21 +131,60 @@ class DashBoardViewModel @Inject constructor(
         getSellerList()
     }
 
+    fun resetToastMessage() {
+        toastMessage.value = null // Reset the Toast message after showing it
+    }
+
     private fun addMenuItem(item: List<Food>) {
         // Update the state to create a new reference, triggering recomposition
         menuList.value = item.toMutableList()
     }
 
+    fun addMenuItemToCloud() {
+        viewModelScope.launch {
+            isLoading.value = true // Start loading
+
+            try {
+                val response = mealsUseCases.addMenuItem.invoke(sellerId.value, food.value)
+                if (response.message == "success") {
+                    toastMessage.value = "Menu item added successfully!"
+                    Log.d("data update", "Success")
+                } else {
+                    toastMessage.value = "Failed to add menu item!"
+                    Log.d("data update", "Failed")
+                }
+            } catch (e: Exception) {
+                toastMessage.value = "An error occurred: ${e.message}"
+                Log.d("error", e.toString())
+            } finally {
+                isLoading.value = false // Stop loading
+            }
+        }
+    }
+
 
     private fun getHomeType() {
         viewModelScope.launch {
+            isLoading.value = true
             try {
                 mData.value = mealsUseCases.mHomeType.invoke().data
             } catch (e: Exception) {
                 Log.d("Error", e.message.toString())
+            } finally {
+                isLoading.value = false
+
             }
-            delay(500)
-            _isLoading.value = false
+        }
+
+
+    }
+
+    fun onTextChange(value: String, labelValue: String) {
+        when (labelValue) {
+            "Menu Name" -> food.value = food.value.copy(name = value)
+            "Image" -> food.value = food.value.copy(image = value)
+            "Price" -> food.value = food.value.copy(price = value.toInt())
+
         }
 
 

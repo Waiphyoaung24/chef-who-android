@@ -44,7 +44,7 @@ fun OnBoardingPage(
         Text(
             modifier = Modifier.padding(horizontal = MediumPadding2),
             text = page.title,
-            style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
             color = primaryLight
         )
         Spacer(modifier = Modifier.height(MediumPadding1))
@@ -66,7 +66,7 @@ fun OnBoardingPagePreview() {
             page = Page(
                 title = "Lorem Ipsum is simply dummy",
                 description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-                image = R.drawable.onboarding1
+                image = R.drawable.img_onboard1
             )
         )
     }

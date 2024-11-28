@@ -9,7 +9,7 @@ class RegisterAuth(
     private val mUserRepository: UserRepository,
 
 ) {
-    suspend fun createUser(user: User): ResponseObject {
-        return mUserRepository.register(user)
+    suspend fun createUser(firstName : String,lastName : String,email : String,password : String,isSeller : Boolean): ResponseObject {
+        return mUserRepository.register(firstName,lastName,email,password,isSeller)
     }
 }

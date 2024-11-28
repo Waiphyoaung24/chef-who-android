@@ -18,34 +18,44 @@ class UserPreferences @Inject constructor(localUserManager: LocalUserManager) {
     // Keys for the data
     companion object {
         val USER_ID_KEY = stringPreferencesKey("user_id")
-        val USER_NAME_KEY = stringPreferencesKey("user_name")
+        val FIRST_NAME_KEY = stringPreferencesKey("first_name")
+        val LAST_NAME_KEY = stringPreferencesKey("last_name")
         val IS_SELLER_KEY = booleanPreferencesKey("is_Seller")
     }
 
     // Save user data
-    suspend fun saveUser(userId: String, userName: String) {
+    suspend fun saveUser(userId: String, firstName: String, lastName: String,isSeller : Boolean) : Boolean {
         context.dataStore.edit { preferences ->
             preferences[USER_ID_KEY] = userId
-            preferences[USER_NAME_KEY] = userName
-            preferences[IS_SELLER_KEY] = false
+            preferences[FIRST_NAME_KEY] = firstName
+            preferences[LAST_NAME_KEY] = lastName
+            preferences[IS_SELLER_KEY] = isSeller
+        }
+        return true
+    }
+    suspend fun setSeller(){
+        context.dataStore.edit { preferences ->
+            preferences[IS_SELLER_KEY] = true
         }
     }
 
     suspend fun clearAllData() {
         context.dataStore.edit { preferences ->
-            preferences.clear() // Clear all keys in the DataStore
+           preferences.clear()
         }
     }
 
-    // Retrieve user data
-    val userNameFlow = context.dataStore.data.map { preferences ->
-        preferences[USER_NAME_KEY]
-    }
 
+    // Retrieve user data
+    val firstNameFlow = context.dataStore.data.map { preferences ->
+        preferences[FIRST_NAME_KEY]
+    }
+    val lastNameFlow = context.dataStore.data.map { preferences ->
+        preferences[LAST_NAME_KEY]
+    }
     val userIdFlow = context.dataStore.data.map { preferences ->
         preferences[USER_ID_KEY]
     }
-
     val isSellerFlow = context.dataStore.data.map { preferences ->
         preferences[IS_SELLER_KEY] ?: false
     }

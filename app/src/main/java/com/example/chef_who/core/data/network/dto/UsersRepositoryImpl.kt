@@ -12,9 +12,10 @@ class UsersRepositoryImpl(
     private val mealsApi: ChefWhoApi,
     private val userPreferences: UserPreferences
 ) : UserRepository {
-    val userNameFlow: Flow<String?> = userPreferences.userNameFlow
     val userIdFlow: Flow<String?> = userPreferences.userIdFlow
-    val isRegisteredFlow: Flow<Boolean> = userPreferences.isSellerFlow
+    val firstNameFlow: Flow<String?> = userPreferences.firstNameFlow
+
+    val isSellerFlow: Flow<Boolean> = userPreferences.isSellerFlow
 
 
     override suspend fun login(user: User): ResponseObject {
@@ -22,30 +23,11 @@ class UsersRepositoryImpl(
     }
 
 
-    override suspend fun register(user: User): ResponseObject {
-       return mealsApi.registerUser(user.first_name, user.last_name, user.email, user.password)
+    override suspend fun register(firstName : String,lastName : String,email : String,password : String,isSeller : Boolean): ResponseObject {
+       return mealsApi.registerUser(firstName,lastName,email,password,isSeller)
     }
 
-    override suspend fun getUserObj(): Flow<User?> {
-        return combine(
-            userNameFlow,
-            userIdFlow,
-            isRegisteredFlow
-        ) { userName, userId, isRegistered ->
-            if (userId != null && userName != null) {
-                User(
-                    id = userId,
-                    first_name = userName.split(" ")[0],
-                    last_name = userName.split(" ")[1],
-                    email = "", // Email is not stored; update if needed
-                    password = "", // Password is not stored; update if needed
-                    isSeller = isRegistered
-                )
-            } else {
-                null // Return null if user data is incomplete
-            }
-        }
-    }
+
 
     override suspend fun setupSellerProfile(sellerProfileResponse: SellerProfileResponse): ResponseObject {
         return mealsApi.setupSellerProfile(sellerProfileResponse)

@@ -2,6 +2,7 @@ package com.example.chef_who.core.data.network.dto
 
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
+import com.example.chef_who.core.domain.models.FoodMenu
 import com.example.chef_who.core.domain.models.Order
 import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
@@ -54,8 +55,12 @@ class MealsRepositoryImpl(
         return mealsApi.getActiveOrders(sellerId)
     }
 
-    override suspend fun updateOrderStatus(orderId: String,orderStatus :String): ResponseObject {
-        return mealsApi.updateOrderStatus(orderId,orderStatus)
+    override suspend fun updateOrderStatus(orderId: String, orderStatus: String): ResponseObject {
+        return mealsApi.updateOrderStatus(orderId, orderStatus)
+    }
+
+    override suspend fun addMenuItemToCloud(sellerId: String, food: FoodMenu): ResponseObject {
+        return mealsApi.addMenuItemToCloud(sellerId = sellerId, food)
     }
 
 

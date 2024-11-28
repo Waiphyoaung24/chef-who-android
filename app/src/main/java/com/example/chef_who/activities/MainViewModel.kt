@@ -39,7 +39,9 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    val user = mutableStateOf(User("", "", "", "", ""))
+    private val _user = mutableStateOf(User("", "", "", "", ""))
+    val user1: State<User> = _user
+
     private val _splashCondition = mutableStateOf(true)
     var splashCondition: State<Boolean> = _splashCondition
     private val _startDestination = mutableStateOf(Route.ChefWhoNavigatorScreen.route)
@@ -48,8 +50,8 @@ class MainViewModel @Inject constructor(
     val userRegistered = mutableStateOf<Boolean>(false)
     private val _toastMessage = MutableStateFlow<String?>(null)
     val toastMessage: StateFlow<String?> = _toastMessage.asStateFlow()
-    val userPreferences = appEntryUseCases.userPreferences
 
+    val mUser = appEntryUseCases.userPreferences
 
     init {
         appEntryUseCases.readAppEntry().onEach { shouldStartFromHomeScreen ->
@@ -67,6 +69,36 @@ class MainViewModel @Inject constructor(
 
         }.launchIn(viewModelScope)
 
+        viewModelScope.launch {
+            launch {
+                appEntryUseCases.userPreferences.userIdFlow.collect { userId ->
+                    if (userId != null) {
+                        Log.d("User Id from registration", userId)
+                        _user.value = _user.value.copy(id = userId)
+                    }
+                }
+            }
+            launch {
+                appEntryUseCases.userPreferences.firstNameFlow.collect { firstName ->
+                    if (firstName != null) {
+                        Log.d("First Name from DataStore", firstName)
+                        _user.value = _user.value.copy(first_name = firstName)
+                    }
+                }
+            }
+            launch {
+                appEntryUseCases.userPreferences.lastNameFlow.collect { lastName ->
+                    if (lastName != null) {
+                        Log.d("Last Name from DataStore", lastName)
+                        _user.value = _user.value.copy(last_name = lastName)
+                    }
+                }
+            }
+            appEntryUseCases.userPreferences.isSellerFlow.collect { isSeller ->
+                    _user.value = _user.value.copy(isSeller = isSeller)
+
+            }
+        }
 
     }
 
@@ -83,17 +115,27 @@ class MainViewModel @Inject constructor(
     fun createUser() {
         viewModelScope.launch {
             try {
-                val response = authUseCases.registerAuth.createUser(user.value)
+
+                // To fix this
+
+                val response = authUseCases.registerAuth.createUser(
+                    _user.value.first_name,
+                    _user.value.last_name,
+                    _user.value.email,
+                    _user.value.password,
+                    _user.value.isSeller
+                )
+                Log.d("response", response.toString())
                 if (response.message == "success") {
                     if (response.user != null) {
-                        user.value = user.value.copy(
+                        _user.value = _user.value.copy(
                             id = response.user.id,
                             first_name = response.user.first_name,
                             last_name = response.user.last_name
                         )
                         appEntryUseCases.userPreferences.saveUser(
-                            user.value.id,
-                            user.value.first_name + user.value.last_name
+                            _user.value.id,
+                            _user.value.first_name, _user.value.last_name, false
                         )
                     }
 
@@ -109,7 +151,7 @@ class MainViewModel @Inject constructor(
 
     }
 
-    fun setUpSellerProfile() {
+    fun setUpSellerProfile(userName: String) {
         val menuItems = listOf(
             MenuItem(
                 name = "Spaghetti Carbonara",
@@ -123,16 +165,22 @@ class MainViewModel @Inject constructor(
             )
         )
         val seller = SellerProfileResponse(
-            title = user.value.first_name + "'s Bistro",
+            title = "$userName's Bistro",
             imageUrl = "https://images.unsplash.com/photo-1496379896897-7b57622f431b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2689&q=80",
             subTitle = "Fine Dining",
             menu_items = menuItems,
-            user_id = user.value.id
+            user_id = _user.value.id
         )
         viewModelScope.launch {
             try {
+
                 val response = authUseCases.setupSellerProfile.invoke(seller)
-                Log.d("response", response.message)
+                if (response.message == "Seller and menu items created successfully") {
+                    triggerToast("You've setup a seller profile just now")
+                    Log.d("response", response.message)
+                    appEntryUseCases.userPreferences.setSeller()
+                }
+
             } catch (e: Exception) {
                 Log.d("Error", e.toString())
             }
@@ -142,21 +190,23 @@ class MainViewModel @Inject constructor(
     fun loginUser() {
         viewModelScope.launch {
             try {
-                val response = authUseCases.loginAuth.invoke(user.value)
+                val response = authUseCases.loginAuth.invoke(_user.value)
                 if (response.message == "success") {
                     if (response.user != null) {
-                        user.value = user.value.copy(
+                        _user.value = _user.value.copy(
                             id = response.user.id,
                             first_name = response.user.first_name,
                             last_name = response.user.last_name
                         )
                     }
-                    appEntryUseCases.userPreferences.saveUser(
-                        user.value.id,
-                        user.value.first_name + user.value.last_name
-                    )
-                    userRegistered.value = true
-                    navigation.emit(Route.ChefWhoNavigatorScreen.route)
+                    if (appEntryUseCases.userPreferences.saveUser(
+                            _user.value.id,
+                            _user.value.first_name, _user.value.last_name,
+                            _user.value.isSeller)
+                    ) {
+                        userRegistered.value = true
+                        navigation.emit(Route.ChefWhoNavigatorScreen.route)
+                    }
                 } else {
                     _toastMessage.value = "Invalid Credentials"
                 }
@@ -172,6 +222,7 @@ class MainViewModel @Inject constructor(
     fun onLogout() {
         viewModelScope.launch {
             try {
+                appEntryUseCases.clearCartItems()
                 appEntryUseCases.userPreferences.clearAllData()
             } catch (e: Exception) {
                 Log.d("error", e.toString())
@@ -182,10 +233,10 @@ class MainViewModel @Inject constructor(
 
     fun onTextChange(value: String, labelValue: String) {
         when (labelValue) {
-            "First Name" -> user.value = user.value.copy(first_name = value)
-            "Last Name" -> user.value = user.value.copy(last_name = value)
-            "Email" -> user.value = user.value.copy(email = value)
-            "Password" -> user.value = user.value.copy(password = value)
+            "First Name" -> _user.value = _user.value.copy(first_name = value)
+            "Last Name" -> _user.value = _user.value.copy(last_name = value)
+            "Email" -> _user.value = _user.value.copy(email = value)
+            "Password" -> _user.value = _user.value.copy(password = value)
 
         }
 

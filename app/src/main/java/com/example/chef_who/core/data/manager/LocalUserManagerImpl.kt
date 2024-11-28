@@ -32,7 +32,9 @@ class LocalUserManagerImpl(
     }
 
     override suspend fun clearCartItems() {
-
+        context.dataStore.edit { preferences ->
+            preferences.remove(CART_ITEMS_KEY) // Remove the cart items key
+        }
     }
 
     override suspend fun getAllData(): Map<String, Any?> {

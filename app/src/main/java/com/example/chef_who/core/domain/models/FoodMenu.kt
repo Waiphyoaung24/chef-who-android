@@ -1,11 +1,11 @@
 package com.example.chef_who.core.domain.models
 
 data class FoodMenu(
-    val country: String,
-    val dsc: String,
-    val id: String,
-    val img: String,
-    val name: String,
-    val price: Double,
-    val rate: Double
+    val id : Int,
+    val name:String,
+    val price:Int,
+    val info:String,
+    val returnPolicy:String,
+    val image:String,
+
 )

@@ -11,6 +11,7 @@ sealed class Route(
 
     object MenuListScreen : Route(route = "menuListScreen")
 
+    object AddListingScreen : Route(route = "addListingScreen")
 
     object BookmarkScreen : Route(route = "bookMarkScreen")
 

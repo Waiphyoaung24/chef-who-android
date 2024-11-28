@@ -37,6 +37,8 @@ class CartViewModel @Inject constructor(
     private val _cartItems = mutableStateOf<List<Cart>>(emptyList())
     val cartItems: State<List<Cart>> = _cartItems
     val userId : String=""
+    var toastMessage = mutableStateOf<String?>(null)
+
     init {
         // Load cart items from DataStore
         viewModelScope.launch {
@@ -80,12 +82,17 @@ class CartViewModel @Inject constructor(
             val data = mealsUseCases.createOrder.invoke(order)
             if (data.message=="success") {
                 //send user to order detail screen
+                toastMessage.value = "Checkout Successful"
                 Log.d("success", "successfully created")
             } else {
+                toastMessage.value = "Failed to checkout!"
                 Log.d("failed", "order failed")
 
             }
         }
+    }
+    fun resetToastMessage() {
+        toastMessage.value = null // Reset the Toast message after showing it
     }
 
 }

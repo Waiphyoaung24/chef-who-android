@@ -3,6 +3,7 @@ package com.example.chef_who.core.data.network.dto
 import android.graphics.pdf.PdfDocument.Page
 import com.example.chef_who.core.domain.models.Cart
 import com.example.chef_who.core.domain.models.Category
+import com.example.chef_who.core.domain.models.FoodMenu
 import com.example.chef_who.core.domain.models.Order
 import com.example.chef_who.core.domain.models.OrderActiveResponse
 import com.example.chef_who.core.domain.models.OrderHistoryResponse
@@ -14,6 +15,7 @@ import com.example.chef_who.customer.domain.Food
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ChefWhoApi {
@@ -45,7 +47,8 @@ interface ChefWhoApi {
         @Query("first_name") firstname: String,
         @Query("last_name") lastname: String,
         @Query("email") email: String,
-        @Query("password") password: String
+        @Query("password") password: String,
+        @Query("isSeller") isSeller: Boolean
     ): ResponseObject
 
     @POST("login")
@@ -72,10 +75,17 @@ interface ChefWhoApi {
     @GET("getActiveOrder")
     suspend fun getActiveOrders(@Query("seller_id") sellerId: String): List<OrderActiveResponse>
 
+
     @POST("updateOrderStatus")
     suspend fun updateOrderStatus(
         @Query("order_item_id") orderId: String,
         @Query("order_status") orderStatus: String
+    ): ResponseObject
+
+    @POST("addMenuItem")
+    suspend fun addMenuItemToCloud(
+        @Query("sellerId") sellerId: String,
+        @Body food: FoodMenu
     ): ResponseObject
 
 }

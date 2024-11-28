@@ -12,6 +12,5 @@ data class Food(
     val info:String,
     val returnPolicy:String,
     val image:String,
-    val listOFImages:List<Int>
 ): Parcelable
 

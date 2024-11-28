@@ -33,7 +33,8 @@ import com.example.chef_who.R
 fun UserProfile(
     onLogout: () -> Unit,
     onBackBtnClick: () -> Unit,
-    onClickSeller: () -> Unit
+    onClickSeller: () -> Unit,
+    userName : String,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,7 +42,7 @@ fun UserProfile(
             .fillMaxSize()
             .statusBarsPadding()
     ) {
-        Text("Profile", style = MaterialTheme.typography.labelMedium.copy(fontSize = 24.sp))
+        Text(userName, style = MaterialTheme.typography.labelMedium.copy(fontSize = 24.sp))
 
 
         Spacer(Modifier.height(24.dp))
@@ -121,7 +122,7 @@ fun UserProfile(
                 modifier = Modifier.weight(0.05f), tint = MaterialTheme.colorScheme.primary
             )
             Text(
-                "To become A seller",
+                "Seller Dashboard",
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.weight(0.2f)
             )

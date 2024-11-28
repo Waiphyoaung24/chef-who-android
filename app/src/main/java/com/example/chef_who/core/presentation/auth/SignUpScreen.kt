@@ -150,8 +150,9 @@ fun MyTextField(
         onValueChange = {
             onTextChange(it, labelValue)
         },
+        textStyle = MaterialTheme.typography.labelMedium,
         leadingIcon = { Icon(imageVector = imageVector, contentDescription = "") },
-        label = { Text(text = labelValue) },
+        label = { Text(text = labelValue, style = MaterialTheme.typography.labelMedium) },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedBorderColor = MaterialTheme.colorScheme.primary,
             focusedLabelColor = MaterialTheme.colorScheme.primary,

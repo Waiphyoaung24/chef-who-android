@@ -20,10 +20,10 @@ import com.example.chef_who.core.domain.usecases.app_entry.ReadAppEntry
 import com.example.chef_who.core.domain.usecases.app_entry.SaveAppEntry
 import com.example.chef_who.core.domain.usecases.app_entry.SaveCartItem
 import com.example.chef_who.core.domain.usecases.auth.AuthUseCases
-import com.example.chef_who.core.domain.usecases.auth.GetCurrentUser
 import com.example.chef_who.core.domain.usecases.auth.LoginAuth
 import com.example.chef_who.core.domain.usecases.auth.RegisterAuth
 import com.example.chef_who.core.domain.usecases.auth.SetUpSellerProfile
+import com.example.chef_who.core.domain.usecases.meals.AddMenuItem
 import com.example.chef_who.core.domain.usecases.meals.CreateOrder
 import com.example.chef_who.core.domain.usecases.meals.DeleteMeals
 import com.example.chef_who.core.domain.usecases.meals.GetActiveOrders
@@ -85,7 +85,6 @@ object AppModule {
         return AuthUseCases(
             loginAuth = LoginAuth(mUserRepository),
             registerAuth = RegisterAuth(mUserRepository),
-            getCurrentUser = GetCurrentUser(mUserRepository),
             setupSellerProfile = SetUpSellerProfile(mUserRepository)
 
         )
@@ -134,7 +133,8 @@ object AppModule {
             getSellerList = GetSellerList(mealsRepository),
             getActiveOrders = GetActiveOrders(mealsRepository),
             getOrderHistory = GetOrderHistory(mealsRepository),
-            updateOrderStatus = UpdateOrderStatus(mealsRepository)
+            updateOrderStatus = UpdateOrderStatus(mealsRepository),
+            addMenuItem = AddMenuItem(mealsRepository)
         )
     }
 

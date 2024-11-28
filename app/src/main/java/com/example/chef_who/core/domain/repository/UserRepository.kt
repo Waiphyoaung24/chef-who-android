@@ -7,8 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
     suspend fun login(user: User) : ResponseObject
-    suspend fun register(user : User) : ResponseObject
-    suspend fun getUserObj(): Flow<User?>
+    suspend fun register(firstName : String,lastName : String,email : String,password : String,isSeller : Boolean) : ResponseObject
     suspend fun setupSellerProfile(sellerProfileResponse: SellerProfileResponse) : ResponseObject
 
 
